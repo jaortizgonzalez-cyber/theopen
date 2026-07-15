@@ -108,6 +108,44 @@
         .golfer-thru { font-size: 0.8em; color: var(--text-light); margin-top: 5px; text-align: right;}
         .golfer-earnings { margin-top: 8px; font-weight: bold; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px;}
 
+        /* ==========================================
+           REGLAS RESPONSIVAS PARA CELULARES
+           ========================================== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .header {
+                padding: 20px 15px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .tournament-status {
+                font-size: 0.85em;
+            }
+            .prizes {
+                flex-direction: column; /* Apila los premios hacia abajo */
+                gap: 12px;
+                font-size: 1em;
+            }
+            .participant-card {
+                padding: 15px;
+            }
+            .card-header {
+                flex-wrap: wrap; /* Permite que el total baje si el nombre es muy largo */
+                gap: 8px;
+            }
+            .participant-name {
+                font-size: 1.3em;
+            }
+            .participant-total {
+                font-size: 1.4em;
+            }
+            .golfers-grid {
+                grid-template-columns: 1fr; /* Una sola columna para los golfistas */
+            }
+        }
     </style>
 </head>
 <body>
@@ -141,15 +179,15 @@
     // PARTICIPANTES
     const participantes = [
         { 
-            nombre: "Nombre Participante 1", 
+            nombre: "José Andrés", 
             picks: ["Scottie Scheffler", "Rory McIlroy", "Collin Morikawa", "Jon Rahm", "Ludvig Aberg"] 
         },
         { 
-            nombre: "Nombre Participante 2", 
+            nombre: "Diana", 
             picks: ["Xander Schauffele", "Bryson DeChambeau", "Viktor Hovland", "Tommy Fleetwood", "Brooks Koepka"] 
         },
         { 
-            nombre: "Nombre Participante 3", 
+            nombre: "Edwin", 
             picks: ["Tiger Woods", "Hideki Matsuyama", "Patrick Cantlay", "Tom Kim", "Min Woo Lee"] 
         }
     ];
@@ -202,11 +240,9 @@
             let sumaPremiosEmpate = 0;
 
             for (let i = 0; i < numEmpatados; i++) {
-                // Si el jugador superó el lugar 70 y no hay premios cargados, suma 0
                 sumaPremiosEmpate += premiosOficiales[posicionActual + i] || 0; 
             }
 
-            // Los que fallan el corte (999) ganan 0 obligatoriamente
             let gananciaPromedio = scoreActual === 999 ? 0 : sumaPremiosEmpate / numEmpatados;
 
             empatados.forEach(jugador => {
@@ -227,14 +263,11 @@
             const response = await fetch(API_URL);
             const data = await response.json();
 
-            // Buscar "The Open" entre los eventos del JSON
             let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
             
-            // Actualizar Estado del Torneo
-            let tourneyStateDesc = event.status.type.description; // ej: "Scheduled", "In Progress"
-            let tourneyStateCode = event.status.type.state;       // ej: "pre", "in", "post"
+            let tourneyStateDesc = event.status.type.description; 
+            let tourneyStateCode = event.status.type.state;       
             
-            // Manejo de la etiqueta superior visualmente
             if (tourneyStateCode === "pre") {
                 document.getElementById("tourneyStatus").innerText = "⏳ El torneo aún no ha comenzado (" + tourneyStateDesc + ")";
             } else {
@@ -245,22 +278,19 @@
             let golfistasExtraidos = [];
             let mapaDatosVisuales = {}; 
 
-            // 1. Extraer y procesar datos crudos
             competidoresData.forEach(comp => {
                 let nombre = comp.athlete.displayName;
                 let normNombre = normalizarNombre(nombre);
                 let scoreStr = comp.score ? comp.score.displayValue : "E";
                 let scoreNum = 0;
 
-                // Lógica de Scores y Cortes
                 if (scoreStr === "E") scoreNum = 0;
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
 
-                // Lógica de Hoyo actual o Tee Time (Thru)
                 let thruInfo = "";
                 if (tourneyStateCode === "pre") {
-                    thruInfo = "Tee: " + (comp.status.detail || "TBD"); // Horario si no ha empezado
+                    thruInfo = "Tee: " + (comp.status.detail || "TBD"); 
                 } else {
                     if (comp.status.type.completed || scoreStr === "CUT" || scoreStr === "WD") {
                         thruInfo = scoreStr === "CUT" ? "Falló Corte" : (scoreStr === "WD" ? "Retirado" : "F");
@@ -272,7 +302,7 @@
                 let infoJugador = {
                     nombreOriginal: nombre,
                     scoreVal: scoreNum,
-                    scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, // Si no ha iniciado, mostramos guión
+                    scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, 
                     pos: comp.status.position ? comp.status.position.displayName : "-",
                     thru: thruInfo,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
@@ -282,13 +312,11 @@
                 mapaDatosVisuales[normNombre] = infoJugador;
             });
 
-            // 2. Calcular matemáticas del dinero proyectado SOLO SI EL TORNEO YA INICIÓ
             let gananciasPorJugador = {};
             if (tourneyStateCode !== "pre") {
                 gananciasPorJugador = calcularGananciasGolfistas(golfistasExtraidos);
             }
 
-            // 3. Cruzar datos con nuestros participantes
             let resultadosPolla = participantes.map(part => {
                 let totalAcumulado = 0;
                 let picksDetallados = [];
@@ -298,7 +326,6 @@
                     let ganancia = gananciasPorJugador[norm] || 0; 
                     totalAcumulado += ganancia;
 
-                    // Si encontramos al jugador en el JSON de ESPN, sacamos su info, si no, datos por defecto
                     let datosVisuales = mapaDatosVisuales[norm] || {
                         nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
                         flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
@@ -310,7 +337,6 @@
                     });
                 });
 
-                // Ordenar los picks de mayor a menor ganancia para que el que más aporta se vea arriba (solo si ya inició)
                 if (tourneyStateCode !== "pre") {
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
                 }
@@ -322,23 +348,19 @@
                 };
             });
 
-            // 4. Ordenar a los participantes de la polla
             resultadosPolla.sort((a, b) => b.total - a.total);
 
-            // 5. Renderizar en el DOM
             const container = document.getElementById("standingsContainer");
             container.innerHTML = ""; 
 
             resultadosPolla.forEach((resultado, index) => {
                 let cardClass = "participant-card";
                 
-                // Solo coloreamos el 1er y 2do puesto si el torneo ya está sumando
                 if (tourneyStateCode !== "pre") {
                     if (index === 0) cardClass += " place-1";
                     if (index === 1) cardClass += " place-2";
                 }
 
-                // Crear HTML de los 5 jugadores
                 let picksHTML = resultado.picks.map(p => {
                     let scoreClass = "";
                     if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
@@ -361,11 +383,9 @@
                     `;
                 }).join('');
 
-                // Ensamblar la tarjeta del participante
                 const div = document.createElement("div");
                 div.className = cardClass;
                 
-                // Mostrar "Empate" o posición según el estado del torneo
                 let positionLabel = tourneyStateCode === "pre" ? "-" : `#${index + 1}`;
 
                 div.innerHTML = `
@@ -389,14 +409,12 @@
         }
     }
 
-    // Inicializar valores de premios en la cabecera
     document.getElementById("totalPool").innerText = formatMoney(VALOR_POLLA);
     document.getElementById("firstPrize").innerText = formatMoney(VALOR_POLLA * 0.70);
     document.getElementById("secondPrize").innerText = formatMoney(VALOR_POLLA * 0.30);
 
-    // Arrancar la app
     actualizarPolla();
-    setInterval(actualizarPolla, 180000); // 3 minutos
+    setInterval(actualizarPolla, 180000); 
 
 </script>
 </body>
