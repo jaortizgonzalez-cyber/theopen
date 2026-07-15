@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polla - The Open Championship</title>
+    <style>
+        :root {
+            --primary-color: #002b5c;
+            --secondary-color: #001a38;
+            --accent-color: #e5b122;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #777777;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 { margin: 0 0 10px 0; font-size: 2.5em; }
+        .tournament-status { color: var(--accent-color); font-weight: bold; font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;}
+        
+        .prizes {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            font-size: 1.2em;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .prizes span { color: var(--accent-color); font-weight: bold; }
+
+        .api-status {
+            text-align: right;
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .participant-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-left: 6px solid #ccc;
+            transition: transform 0.2s ease;
+        }
+        .participant-card:hover { transform: translateY(-3px); }
+        .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
+        .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
+        .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
+        .participant-total { font-size: 1.8em; font-weight: 900; color: #2e7d32; }
+
+        .golfers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .golfer-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e0e0e0;
+        }
+        .golfer-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px;}
+        .golfer-top img { width: 24px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
+        .golfer-name { font-weight: 600; font-size: 1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; }
+        .score-box { background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;}
+        .score-box.over-par { background: #d32f2f; }
+        .score-box.even-par { background: #757575; }
+        .score-box.cut { background: #000000; }
+        
+        .golfer-pos { color: var(--text-light); font-weight: bold; }
+        .golfer-thru { font-size: 0.8em; color: var(--text-light); margin-top: 5px; text-align: right;}
+        .golfer-earnings { margin-top: 8px; font-weight: bold; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px;}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🏆 Polla The Open Championship 2026</h1>
+        <div class="tournament-status" id="tourneyStatus">Conectando...</div>
+        
+        <div class="prizes">
+            <div>Bolsa de la Polla: <span id="totalPool">$500,000</span></div>
+            <div>1er Puesto (70%): <span id="firstPrize">$350,000</span></div>
+            <div>2do Puesto (30%): <span id="secondPrize">$150,000</span></div>
+        </div>
+    </div>
+
+    <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
+
+    <div id="standingsContainer">
+        <!-- Tarjetas generadas por JS -->
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURACIÓN DE LA POLLA
+    // ==========================================
+    const VALOR_POLLA = 500000; 
+    const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
+
+    // PARTICIPANTES
+    const participantes = [
+        { 
+            nombre: "Nombre Participante 1", 
+            picks: ["Scottie Scheffler", "Rory McIlroy", "Collin Morikawa", "Jon Rahm", "Ludvig Aberg"] 
+        },
+        { 
+            nombre: "Nombre Participante 2", 
+            picks: ["Xander Schauffele", "Bryson DeChambeau", "Viktor Hovland", "Tommy Fleetwood", "Brooks Koepka"] 
+        },
+        { 
+            nombre: "Nombre Participante 3", 
+            picks: ["Tiger Woods", "Hideki Matsuyama", "Patrick Cantlay", "Tom Kim", "Min Woo Lee"] 
+        }
+    ];
+
+    // BOLSAS OFICIALES THE OPEN 2026 (En USD).
+    const premiosOficiales = [
+        3200000, 1842000, 1181000, 917000, 738000, 639700, 549700, 463250, 406200, 367000,
+        334200, 296000, 278500, 260700, 241900, 222700, 212000, 202000, 193600, 184500,
+        175900, 167100, 158100, 149300, 144250, 138000, 133000, 128400, 122800, 116500,
+        112700, 106900, 103100, 100200, 96700, 92900, 88500, 84100, 81000, 78400,
+        75200, 71500, 68300, 64400, 60700, 57600, 55300, 53100, 50700, 49400,
+        48350, 47500, 46800, 46100, 45300, 44700, 44250, 43950, 43625, 43325,
+        43100, 42900, 42700, 42500, 42150, 41825, 41500, 41200, 40900, 40700
+    ];
+
+    // ==========================================
+    // 2. UTILIDADES
+    // ==========================================
+    function normalizarNombre(nombre) {
+        return nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    }
+
+    function formatMoney(amount) {
+        return "$" + amount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    }
+
+    // ==========================================
+    // 3. LÓGICA DE CÁLCULO
+    // ==========================================
+    function calcularGananciasGolfistas(leaderboardArray) {
+        // Ordenar por score numérico
+        leaderboardArray.sort((a, b) => a.scoreVal - b.scoreVal);
+
+        let mapaGanancias = {};
+        let posicionActual = 0; 
+
+        while (posicionActual < leaderboardArray.length) {
+            let scoreActual = leaderboardArray[posicionActual].scoreVal;
+            let empatados = [];
+
+            for (let i = posicionActual; i < leaderboardArray.length; i++) {
+                if (leaderboardArray[i].scoreVal === scoreActual) {
+                    empatados.push(leaderboardArray[i].nombreOriginal);
+                } else {
+                    break;
+                }
+            }
+
+            let numEmpatados = empatados.length;
+            let sumaPremiosEmpate = 0;
+
+            for (let i = 0; i < numEmpatados; i++) {
+                // Si el jugador superó el lugar 70 y no hay premios cargados, suma 0
+                sumaPremiosEmpate += premiosOficiales[posicionActual + i] || 0; 
+            }
+
+            // Los que fallan el corte (999) ganan 0 obligatoriamente
+            let gananciaPromedio = scoreActual === 999 ? 0 : sumaPremiosEmpate / numEmpatados;
+
+            empatados.forEach(jugador => {
+                mapaGanancias[normalizarNombre(jugador)] = gananciaPromedio;
+            });
+
+            posicionActual += numEmpatados;
+        }
+
+        return mapaGanancias;
+    }
+
+    // ==========================================
+    // 4. MOTOR PRINCIPAL
+    // ==========================================
+    async function actualizarPolla() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+
+            // Buscar "The Open" entre los eventos del JSON
+            let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
+            
+            // Actualizar Estado del Torneo
+            let tourneyStateDesc = event.status.type.description; // ej: "Scheduled", "In Progress"
+            let tourneyStateCode = event.status.type.state;       // ej: "pre", "in", "post"
+            
+            // Manejo de la etiqueta superior visualmente
+            if (tourneyStateCode === "pre") {
+                document.getElementById("tourneyStatus").innerText = "⏳ El torneo aún no ha comenzado (" + tourneyStateDesc + ")";
+            } else {
+                document.getElementById("tourneyStatus").innerText = "⛳ " + tourneyStateDesc;
+            }
+
+            const competidoresData = event.competitions[0].competitors;
+            let golfistasExtraidos = [];
+            let mapaDatosVisuales = {}; 
+
+            // 1. Extraer y procesar datos crudos
+            competidoresData.forEach(comp => {
+                let nombre = comp.athlete.displayName;
+                let normNombre = normalizarNombre(nombre);
+                let scoreStr = comp.score ? comp.score.displayValue : "E";
+                let scoreNum = 0;
+
+                // Lógica de Scores y Cortes
+                if (scoreStr === "E") scoreNum = 0;
+                else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
+                else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
+
+                // Lógica de Hoyo actual o Tee Time (Thru)
+                let thruInfo = "";
+                if (tourneyStateCode === "pre") {
+                    thruInfo = "Tee: " + (comp.status.detail || "TBD"); // Horario si no ha empezado
+                } else {
+                    if (comp.status.type.completed || scoreStr === "CUT" || scoreStr === "WD") {
+                        thruInfo = scoreStr === "CUT" ? "Falló Corte" : (scoreStr === "WD" ? "Retirado" : "F");
+                    } else {
+                        thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + comp.status.detail;
+                    }
+                }
+
+                let infoJugador = {
+                    nombreOriginal: nombre,
+                    scoreVal: scoreNum,
+                    scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, // Si no ha iniciado, mostramos guión
+                    pos: comp.status.position ? comp.status.position.displayName : "-",
+                    thru: thruInfo,
+                    flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                };
+
+                golfistasExtraidos.push(infoJugador);
+                mapaDatosVisuales[normNombre] = infoJugador;
+            });
+
+            // 2. Calcular matemáticas del dinero proyectado SOLO SI EL TORNEO YA INICIÓ
+            let gananciasPorJugador = {};
+            if (tourneyStateCode !== "pre") {
+                gananciasPorJugador = calcularGananciasGolfistas(golfistasExtraidos);
+            }
+
+            // 3. Cruzar datos con nuestros participantes
+            let resultadosPolla = participantes.map(part => {
+                let totalAcumulado = 0;
+                let picksDetallados = [];
+
+                part.picks.forEach(jugador => {
+                    let norm = normalizarNombre(jugador);
+                    let ganancia = gananciasPorJugador[norm] || 0; 
+                    totalAcumulado += ganancia;
+
+                    // Si encontramos al jugador en el JSON de ESPN, sacamos su info, si no, datos por defecto
+                    let datosVisuales = mapaDatosVisuales[norm] || {
+                        nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
+                        flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                    };
+
+                    picksDetallados.push({
+                        ...datosVisuales,
+                        gananciaCalculada: ganancia
+                    });
+                });
+
+                // Ordenar los picks de mayor a menor ganancia para que el que más aporta se vea arriba (solo si ya inició)
+                if (tourneyStateCode !== "pre") {
+                    picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
+                }
+
+                return {
+                    nombre: part.nombre,
+                    total: totalAcumulado,
+                    picks: picksDetallados
+                };
+            });
+
+            // 4. Ordenar a los participantes de la polla
+            resultadosPolla.sort((a, b) => b.total - a.total);
+
+            // 5. Renderizar en el DOM
+            const container = document.getElementById("standingsContainer");
+            container.innerHTML = ""; 
+
+            resultadosPolla.forEach((resultado, index) => {
+                let cardClass = "participant-card";
+                
+                // Solo coloreamos el 1er y 2do puesto si el torneo ya está sumando
+                if (tourneyStateCode !== "pre") {
+                    if (index === 0) cardClass += " place-1";
+                    if (index === 1) cardClass += " place-2";
+                }
+
+                // Crear HTML de los 5 jugadores
+                let picksHTML = resultado.picks.map(p => {
+                    let scoreClass = "";
+                    if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
+                    else if (p.scoreStr.includes("+")) scoreClass = "over-par";
+                    else if (p.scoreStr === "E") scoreClass = "even-par";
+
+                    return `
+                        <div class="golfer-item">
+                            <div class="golfer-top">
+                                <img src="${p.flag}" alt="flag" onerror="this.style.display='none'">
+                                <div class="golfer-name" title="${p.nombreOriginal}">${p.nombreOriginal}</div>
+                            </div>
+                            <div class="golfer-stats">
+                                <span class="golfer-pos">${p.pos}</span>
+                                <span class="score-box ${scoreClass}">${p.scoreStr}</span>
+                            </div>
+                            <div class="golfer-thru">${p.thru}</div>
+                            <div class="golfer-earnings">${formatMoney(p.gananciaCalculada)}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Ensamblar la tarjeta del participante
+                const div = document.createElement("div");
+                div.className = cardClass;
+                
+                // Mostrar "Empate" o posición según el estado del torneo
+                let positionLabel = tourneyStateCode === "pre" ? "-" : `#${index + 1}`;
+
+                div.innerHTML = `
+                    <div class="card-header">
+                        <div class="participant-name"><span>${positionLabel}</span>${resultado.nombre}</div>
+                        <div class="participant-total">${formatMoney(resultado.total)}</div>
+                    </div>
+                    <div class="golfers-grid">
+                        ${picksHTML}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            const now = new Date();
+            document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString()}`;
+
+        } catch (error) {
+            console.error("Error consultando la API:", error);
+            document.getElementById("lastUpdate").innerText = "Error actualizando datos. Reintentando...";
+        }
+    }
+
+    // Inicializar valores de premios en la cabecera
+    document.getElementById("totalPool").innerText = formatMoney(VALOR_POLLA);
+    document.getElementById("firstPrize").innerText = formatMoney(VALOR_POLLA * 0.70);
+    document.getElementById("secondPrize").innerText = formatMoney(VALOR_POLLA * 0.30);
+
+    // Arrancar la app
+    actualizarPolla();
+    setInterval(actualizarPolla, 180000); // 3 minutos
+
+</script>
+</body>
+</html>
