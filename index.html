@@ -108,9 +108,7 @@
         .golfer-thru { font-size: 0.8em; color: var(--text-light); margin-top: 5px; text-align: right;}
         .golfer-earnings { margin-top: 8px; font-weight: bold; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px;}
 
-        /* ==========================================
-           REGLAS RESPONSIVAS PARA CELULARES
-           ========================================== */
+        /* REGLAS RESPONSIVAS PARA CELULARES */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -125,7 +123,7 @@
                 font-size: 0.85em;
             }
             .prizes {
-                flex-direction: column; /* Apila los premios hacia abajo */
+                flex-direction: column;
                 gap: 12px;
                 font-size: 1em;
             }
@@ -133,7 +131,7 @@
                 padding: 15px;
             }
             .card-header {
-                flex-wrap: wrap; /* Permite que el total baje si el nombre es muy largo */
+                flex-wrap: wrap;
                 gap: 8px;
             }
             .participant-name {
@@ -143,7 +141,7 @@
                 font-size: 1.4em;
             }
             .golfers-grid {
-                grid-template-columns: 1fr; /* Una sola columna para los golfistas */
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -179,15 +177,15 @@
     // PARTICIPANTES
     const participantes = [
         { 
-            nombre: "Nombre Participante 1", 
+            nombre: "José Andrés", 
             picks: ["Scottie Scheffler", "Rory McIlroy", "Collin Morikawa", "Jon Rahm", "Ludvig Aberg"] 
         },
         { 
-            nombre: "Nombre Participante 2", 
+            nombre: "Diana", 
             picks: ["Xander Schauffele", "Bryson DeChambeau", "Viktor Hovland", "Tommy Fleetwood", "Brooks Koepka"] 
         },
         { 
-            nombre: "Nombre Participante 3", 
+            nombre: "Edwin", 
             picks: ["Tiger Woods", "Hideki Matsuyama", "Patrick Cantlay", "Tom Kim", "Min Woo Lee"] 
         }
     ];
@@ -214,11 +212,22 @@
         return "$" + amount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
 
+    // Convertidor de Tiempo Universal (Z) a Horario de Colombia
+    function formatearHoraColombia(isoString) {
+        if (!isoString) return "TBD";
+        const date = new Date(isoString);
+        return date.toLocaleTimeString('es-CO', {
+            timeZone: 'America/Bogota',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
     // ==========================================
     // 3. LÓGICA DE CÁLCULO
     // ==========================================
     function calcularGananciasGolfistas(leaderboardArray) {
-        // Ordenar por score numérico
         leaderboardArray.sort((a, b) => a.scoreVal - b.scoreVal);
 
         let mapaGanancias = {};
@@ -288,14 +297,17 @@
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
 
+                // Aplicar la hora de Colombia extraída del valor .teeTime
+                let horaColombia = formatearHoraColombia(comp.status.teeTime);
+                
                 let thruInfo = "";
                 if (tourneyStateCode === "pre") {
-                    thruInfo = "Tee: " + (comp.status.detail || "TBD"); 
+                    thruInfo = "Tee: " + horaColombia + " COL"; 
                 } else {
                     if (comp.status.type.completed || scoreStr === "CUT" || scoreStr === "WD") {
                         thruInfo = scoreStr === "CUT" ? "Falló Corte" : (scoreStr === "WD" ? "Retirado" : "F");
                     } else {
-                        thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + comp.status.detail;
+                        thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + horaColombia + " COL";
                     }
                 }
 
