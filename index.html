@@ -522,7 +522,8 @@
             let tourneyStateDesc = event.status.type.description; 
             let tourneyStateCode = event.status.type.state;       
 
-            // === LECTURA DEL ESTADO DE LA RONDA ===
+            // === LECTURA DEL ESTADO Y NÚMERO DE LA RONDA ===
+            let currentRound = event.competitions[0].status.period || 1;
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
             let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
@@ -536,21 +537,22 @@
             
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
-            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO ===
+            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO CON RONDA DINÁMICA ===
             let semaforoClase = "verde";
-            let textoSemaforo = tourneyStateDesc;
+            let textoSemaforo = "";
 
             if (tourneyStateCode === "post") {
                 semaforoClase = "rojo";
+                textoSemaforo = "Torneo Finalizado";
             } else if (tourneyStateCode === "pre") {
                 semaforoClase = "amarillo";
-                textoSemaforo = "El torneo aún no ha comenzado (" + tourneyStateDesc + ")";
+                textoSemaforo = "El torneo aún no ha comenzado";
             } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
                 semaforoClase = "rojo";
-                textoSemaforo = "Ronda Finalizada - " + tourneyStateDesc;
+                textoSemaforo = `Ronda ${currentRound} Finalizada`;
             } else {
                 semaforoClase = "verde";
-                textoSemaforo = "Ronda en Juego - " + tourneyStateDesc;
+                textoSemaforo = `Ronda ${currentRound} en Juego`;
             }
 
             document.getElementById("tourneyStatus").innerHTML = `<span class="semaforo ${semaforoClase}"></span> ${textoSemaforo}`;
