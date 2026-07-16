@@ -192,9 +192,7 @@
 
         .golfer-earnings { margin-top: 8px; font-weight: 900; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px; font-size: 1.1em;}
 
-        /* ==========================================
-           ESTILOS MODAL ANIMADO (TARJETA JUGADOR)
-           ========================================== */
+        /* MODAL JUGADOR */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;
@@ -228,6 +226,32 @@
         .round span { display: block; font-size: 0.85em; color: #888; margin-bottom: 5px; font-weight: 600;}
         .round strong { font-size: 1.3em; color: var(--primary-color); }
 
+        /* ALERTA WOW (EAGLE / HOLE IN ONE) */
+        .wow-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .wow-overlay.active { opacity: 1; pointer-events: all; }
+        .wow-box {
+            background: linear-gradient(135deg, #FFD700, #F5A623);
+            padding: 40px; border-radius: 20px; text-align: center;
+            transform: scale(0.5); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); border: 4px solid #fff;
+            width: 80%; max-width: 400px;
+        }
+        .wow-overlay.active .wow-box { transform: scale(1); }
+        .wow-icon { font-size: 5em; margin-bottom: 10px; animation: bounce-wow 1s infinite; }
+        .wow-title { font-size: 2.8em; font-weight: 900; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 0; text-transform: uppercase; line-height: 1.1;}
+        .wow-name { font-size: 1.8em; font-weight: 800; color: #001a38; margin-top: 15px; }
+        .wow-desc { font-size: 1.2em; color: #fff; margin-top: 10px; font-weight: bold; }
+        
+        @keyframes bounce-wow { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-20px); } 
+        }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             .header { padding: 20px 15px; }
@@ -240,6 +264,8 @@
             .participant-total { font-size: 1.4em; }
             .golfers-grid { grid-template-columns: 1fr; }
             .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
+            .wow-title { font-size: 2.2em; }
+            .wow-name { font-size: 1.5em; }
         }
     </style>
 </head>
@@ -265,7 +291,7 @@
     </div>
 </div>
 
-<!-- ESTRUCTURA DEL MODAL -->
+<!-- ESTRUCTURA DEL MODAL DE JUGADOR -->
 <div id="golferModal" class="modal-overlay" onclick="cerrarModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close-modal" onclick="cerrarModal(null, true)">&times;</span>
@@ -288,6 +314,16 @@
     </div>
 </div>
 
+<!-- ESTRUCTURA DE LA ALERTA WOW (EAGLE / HOLE IN ONE) -->
+<div id="wowAlert" class="wow-overlay">
+    <div class="wow-box">
+        <div class="wow-icon" id="wowIcon">🦅</div>
+        <div class="wow-title" id="wowTitle">¡EAGLE!</div>
+        <div class="wow-name" id="wowName">Jugador</div>
+        <div class="wow-desc">¡Aportando magia a la polla!</div>
+    </div>
+</div>
+
 <script>
     // ==========================================
     // 1. CONFIGURACIÓN DE LA POLLA
@@ -295,37 +331,17 @@
     const CUOTA_INSCRIPCION = 50000; 
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
-    // PARTICIPANTES REALES COMPLETOS
     const participantes = [
-        { 
-            nombre: "Ronnie Sanchez", 
-            picks: ["Scottie Scheffler", "Rory McIlroy", "Xander Schauffele", "Matt Fitzpatrick", "Ludvig Aberg"] 
-        },
-        { 
-            nombre: "Juan Ardila", 
-            picks: ["Shane Lowry", "Rory McIlroy", "Viktor Hovland", "Tommy Fleetwood", "Scottie Scheffler"] 
-        },
-        { 
-            nombre: "Felipe Bernal", 
-            picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Tommy Fleetwood", "Collin Morikawa"] 
-        },
-        { 
-            nombre: "Andrés Ortiz", 
-            picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Xander Schauffele", "Tommy Fleetwood"] 
-        },
-        {
-            nombre: "Fernando Fierro",
-            picks: ["Robert MacIntyre", "Akshay Bhatia", "Min Woo Lee", "Shane Lowry", "Rory McIlroy"]
-        },
-        {
-            nombre: "Paul Franco",
-            picks: ["Matt Fitzpatrick", "Rory McIlroy", "Patrick Cantlay", "Maverick McNealy", "Scottie Scheffler"]
-        }
+        { nombre: "Ronnie Sanchez", picks: ["Scottie Scheffler", "Rory McIlroy", "Xander Schauffele", "Matt Fitzpatrick", "Ludvig Aberg"] },
+        { nombre: "Juan Ardila", picks: ["Shane Lowry", "Rory McIlroy", "Viktor Hovland", "Tommy Fleetwood", "Scottie Scheffler"] },
+        { nombre: "Felipe Bernal", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Tommy Fleetwood", "Collin Morikawa"] },
+        { nombre: "Andrés Ortiz", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Xander Schauffele", "Tommy Fleetwood"] },
+        { nombre: "Fernando Fierro", picks: ["Robert MacIntyre", "Akshay Bhatia", "Min Woo Lee", "Shane Lowry", "Rory McIlroy"] },
+        { nombre: "Paul Franco", picks: ["Matt Fitzpatrick", "Rory McIlroy", "Patrick Cantlay", "Maverick McNealy", "Scottie Scheffler"] }
     ];
 
     const BOLSA_TOTAL = CUOTA_INSCRIPCION * participantes.length;
 
-    // BOLSAS OFICIALES THE OPEN 2026 (En USD).
     const premiosOficiales = [
         3200000, 1842000, 1181000, 917000, 738000, 639700, 549700, 463250, 406200, 367000,
         334200, 296000, 278500, 260700, 241900, 222700, 212000, 202000, 193600, 184500,
@@ -335,6 +351,12 @@
         48350, 47500, 46800, 46100, 45300, 44700, 44250, 43950, 43625, 43325,
         43100, 42900, 42700, 42500, 42150, 41825, 41500, 41200, 40900, 40700
     ];
+
+    const nombresElegidos = new Set();
+    participantes.forEach(p => p.picks.forEach(pick => nombresElegidos.add(normalizarNombre(pick))));
+
+    // Memoria para detectar Eagles, almacenando SCORE y HOYO (THRU)
+    let historialJugadores = {};
 
     // ==========================================
     // 2. UTILIDADES Y MODALES
@@ -365,7 +387,6 @@
         document.getElementById("m-r2").innerText = r2;
         document.getElementById("m-r3").innerText = r3;
         document.getElementById("m-r4").innerText = r4;
-        
         let modal = document.getElementById("golferModal");
         modal.classList.add("show");
     };
@@ -374,6 +395,20 @@
         if (force || e.target.id === 'golferModal') {
             document.getElementById("golferModal").classList.remove("show");
         }
+    };
+
+    window.mostrarAlertaWow = function(nombre, tipo) {
+        document.getElementById('wowName').innerText = nombre;
+        document.getElementById('wowTitle').innerText = "¡" + tipo + "!";
+        document.getElementById('wowIcon').innerText = tipo.includes("ALBATROS") ? "⛳🏌️‍♂️" : "🦅";
+        
+        let overlay = document.getElementById('wowAlert');
+        overlay.classList.add('active');
+        setTimeout(() => { overlay.classList.remove('active'); }, 6000);
+    };
+
+    window.testWow = function() {
+        mostrarAlertaWow("Scottie Scheffler", "EAGLE");
     };
 
     function normalizarNombre(nombre) {
@@ -454,6 +489,9 @@
             const competidoresData = event.competitions[0].competitors;
             let golfistasExtraidos = [];
             let mapaDatosVisuales = {}; 
+            
+            let nuevoHistorial = {};
+            let eventosWow = []; 
 
             competidoresData.forEach(comp => {
                 let nombre = comp.athlete.displayName;
@@ -479,6 +517,29 @@
                 let thruInfo = "";
                 let isLive = false;
                 let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
+                
+                // Extraer el número de hoyo actual para la lógica anti-errores
+                let currentThruNum = comp.status.thru || 0;
+
+                // === LÓGICA ESTRICTA DE ALERTA WOW ===
+                if (historialJugadores[normNombre] && tourneyStateCode !== "pre" && !noHaDebutado) {
+                    let prevData = historialJugadores[normNombre];
+                    let diffScore = scoreNum - prevData.score;
+                    let diffThru = currentThruNum - prevData.thru;
+
+                    // Si el score bajó 2 o más golpes
+                    if (diffScore <= -2) {
+                        // Anti-throttling: Solo es Eagle si avanzó 0 o 1 hoyo desde la última validación
+                        if (diffThru >= 0 && diffThru <= 1) { 
+                            if (nombresElegidos.has(normNombre)) {
+                                let tipoWow = diffScore <= -3 ? "ALBATROS / HOYO EN 1" : "EAGLE";
+                                eventosWow.push({ nombre: nombre, tipo: tipoWow });
+                            }
+                        }
+                    }
+                }
+                
+                nuevoHistorial[normNombre] = { score: scoreNum, thru: currentThruNum };
 
                 if (tourneyStateCode === "pre") {
                     thruInfo = "Tee: " + horaColombia + " COL"; 
@@ -536,6 +597,12 @@
                 mapaDatosVisuales[normNombre] = infoJugador;
             });
 
+            historialJugadores = nuevoHistorial;
+
+            if (eventosWow.length > 0) {
+                mostrarAlertaWow(eventosWow[0].nombre, eventosWow[0].tipo);
+            }
+
             let gananciasPorJugador = {};
             if (tourneyStateCode !== "pre") {
                 gananciasPorJugador = calcularGananciasGolfistas(golfistasExtraidos);
@@ -573,11 +640,19 @@
                 } else {
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
                     
-                    // CORRECCIÓN: Filtrar solo a los que ya debutaron para repartir MVP y Saco de Sal
                     let activos = picksDetallados.filter(p => !p.noHaDebutado);
                     if (activos.length > 0) {
-                        if (activos[0].gananciaCalculada > 0) activos[0].isMVP = true;
-                        activos[activos.length - 1].isAnchor = true;
+                        let maxGanancia = activos[0].gananciaCalculada;
+                        let minGanancia = activos[activos.length - 1].gananciaCalculada;
+                        
+                        activos.forEach(p => {
+                            if (p.gananciaCalculada > 0 && p.gananciaCalculada === maxGanancia) {
+                                p.isMVP = true;
+                            }
+                            if (p.gananciaCalculada === minGanancia && minGanancia < maxGanancia) {
+                                p.isAnchor = true;
+                            }
+                        });
                     }
                 }
 
