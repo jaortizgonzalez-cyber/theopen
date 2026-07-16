@@ -467,8 +467,12 @@
     // ==========================================
     async function actualizarPolla() {
         try {
-            const response = await fetch(API_URL);
+            // === CACHE BUSTER APLICADO AQUÍ ===
+            // Añadimos el timestamp actual para obligar al navegador a descargar datos frescos de ESPN
+            const urlFresco = API_URL + "&t=" + new Date().getTime();
+            const response = await fetch(urlFresco, { cache: "no-store" });
             const data = await response.json();
+
             let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
             
             if (event.courses && event.courses.length > 0) {
@@ -644,7 +648,6 @@
                             if (p.gananciaCalculada > 0 && p.gananciaCalculada === maxGanancia) {
                                 p.isMVP = true;
                             }
-                            // CORRECCIÓN SACO DE SAL: Solo si es menor al MVP y además va SOBRE PAR (scoreVal > 0)
                             if (p.gananciaCalculada === minGanancia && minGanancia < maxGanancia && p.scoreVal > 0) {
                                 p.isAnchor = true;
                             }
