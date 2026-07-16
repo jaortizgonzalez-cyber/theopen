@@ -78,7 +78,6 @@
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
 
-        /* EFECTO "EN LA CAZA" (On The Hunt) */
         @keyframes golden-glow {
             0% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
             50% { box-shadow: 0 0 20px rgba(229, 177, 34, 0.6); }
@@ -100,11 +99,7 @@
             user-select: none; 
         }
         
-        .participant-total-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 15px; 
-        }
+        .participant-total-wrapper { display: flex; align-items: center; gap: 15px; }
 
         .toggle-btn {
             font-size: 1.8em;
@@ -145,45 +140,29 @@
             flex-direction: column;
             border: 1px solid #e0e0e0;
             position: relative;
-            cursor: help; /* Indica que hay tooltip disponible */
+            cursor: pointer; 
+            transition: background 0.2s;
         }
+        .golfer-item:active { background: #e0e0e0; }
         
         .golfer-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;}
         
-        /* ROSTROS Y BANDERAS */
-        .headshot-container {
-            position: relative;
-            width: 40px;
-            height: 40px;
-        }
+        .headshot-container { position: relative; width: 40px; height: 40px; }
         .headshot-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            background-color: #e0e0e0; border: 1px solid #ccc;
         }
         .flag-small {
-            position: absolute;
-            bottom: -2px;
-            right: -5px;
-            width: 18px;
-            border-radius: 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            position: absolute; bottom: -2px; right: -5px; width: 18px;
+            border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
-        .golfer-name-wrapper {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .golfer-name-wrapper { display: flex; flex-direction: column; overflow: hidden; }
         .golfer-name { font-weight: 700; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-color);}
-        .special-badge { font-size: 0.8em; }
+        .special-badge { font-size: 0.9em; margin-left: 3px; }
 
         .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; margin-top: 5px; }
         
-        /* FLECHAS DE MOVIMIENTO */
         .pos-wrapper { display: flex; align-items: center; gap: 5px; }
         .golfer-pos { color: var(--text-dark); font-weight: 900; font-size: 1.1em;}
         .mov-up { color: #2e7d32; font-size: 0.75em; font-weight: bold;}
@@ -196,22 +175,13 @@
         .score-box.cut { background: #000000; }
         
         .golfer-thru { 
-            font-size: 0.85em; 
-            color: var(--text-light); 
-            margin-top: 8px; 
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+            font-size: 0.85em; color: var(--text-light); margin-top: 8px; 
+            display: flex; justify-content: flex-end; align-items: center;
         }
         
         .live-dot {
-            height: 10px;
-            width: 10px;
-            background-color: #ff3b30;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-            animation: pulse-red 1.5s infinite;
+            height: 10px; width: 10px; background-color: #ff3b30; border-radius: 50%;
+            display: inline-block; margin-right: 6px; animation: pulse-red 1.5s infinite;
         }
         
         @keyframes pulse-red {
@@ -221,6 +191,42 @@
         }
 
         .golfer-earnings { margin-top: 8px; font-weight: 900; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px; font-size: 1.1em;}
+
+        /* ==========================================
+           ESTILOS MODAL ANIMADO (TARJETA JUGADOR)
+           ========================================== */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: white; border-radius: 16px; padding: 25px; width: 90%; max-width: 360px;
+            transform: scale(0.8) translateY(50px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3); position: relative;
+        }
+        .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
+
+        .close-modal {
+            position: absolute; top: 10px; right: 15px; font-size: 1.8em; 
+            cursor: pointer; color: #999; font-weight: bold;
+        }
+        
+        .modal-header-info { display: flex; align-items: center; gap: 15px; margin-bottom: 20px;}
+        .modal-header-info .img-wrapper { position: relative; width: 70px; height: 70px; }
+        .modal-header-info img.main-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
+        .modal-header-info img.flag-pic { position: absolute; bottom: 0; right: -5px; width: 25px; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.4);}
+        
+        .modal-name-pos h2 { margin: 0; font-size: 1.4em; color: var(--primary-color); line-height: 1.1; }
+        .modal-name-pos .m-pos { margin-top: 5px; color: #555; font-size: 1.1em; font-weight: bold;}
+        .modal-name-pos .m-score { color: var(--primary-color); font-weight: 900;}
+
+        .round-scores { display: flex; justify-content: space-between; gap: 8px;}
+        .round { text-align: center; background: #f4f6f8; padding: 12px 5px; border-radius: 10px; flex: 1; border: 1px solid #eaeaea;}
+        .round span { display: block; font-size: 0.85em; color: #888; margin-bottom: 5px; font-weight: 600;}
+        .round strong { font-size: 1.3em; color: var(--primary-color); }
 
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -242,7 +248,6 @@
 <div class="container">
     <div class="header">
         <h1>🏆 Polla The Open Championship 2026</h1>
-        <!-- FICHA TÉCNICA DEL CAMPO -->
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
@@ -257,6 +262,29 @@
 
     <div id="standingsContainer">
         <!-- Tarjetas generadas por JS -->
+    </div>
+</div>
+
+<!-- ESTRUCTURA DEL MODAL -->
+<div id="golferModal" class="modal-overlay" onclick="cerrarModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="cerrarModal(null, true)">&times;</span>
+        <div class="modal-header-info">
+            <div class="img-wrapper">
+                <img id="m-foto" class="main-pic" src="" alt="">
+                <img id="m-flag" class="flag-pic" src="" alt="">
+            </div>
+            <div class="modal-name-pos">
+                <h2 id="m-nombre">Nombre</h2>
+                <div class="m-pos">Pos: <span id="m-pos"></span> | <span class="m-score" id="m-score"></span></div>
+            </div>
+        </div>
+        <div class="round-scores">
+            <div class="round"><span>R1</span><strong id="m-r1">--</strong></div>
+            <div class="round"><span>R2</span><strong id="m-r2">--</strong></div>
+            <div class="round"><span>R3</span><strong id="m-r3">--</strong></div>
+            <div class="round"><span>R4</span><strong id="m-r4">--</strong></div>
+        </div>
     </div>
 </div>
 
@@ -309,14 +337,13 @@
     ];
 
     // ==========================================
-    // 2. UTILIDADES Y ESTADO VISUAL
+    // 2. UTILIDADES Y MODALES
     // ==========================================
     const participantesColapsados = new Set();
 
     window.toggleTarjeta = function(nombreParticipante, elementoCabecera) {
         const cuadricula = elementoCabecera.nextElementSibling;
         const botonToggle = elementoCabecera.querySelector('.toggle-btn');
-
         if (participantesColapsados.has(nombreParticipante)) {
             participantesColapsados.delete(nombreParticipante);
             cuadricula.classList.remove('hidden-grid');
@@ -325,6 +352,27 @@
             participantesColapsados.add(nombreParticipante);
             cuadricula.classList.add('hidden-grid');
             botonToggle.innerText = "+";
+        }
+    };
+
+    window.abrirModal = function(nombre, foto, flag, r1, r2, r3, r4, pos, score) {
+        document.getElementById("m-nombre").innerText = nombre;
+        document.getElementById("m-foto").src = foto;
+        document.getElementById("m-flag").src = flag;
+        document.getElementById("m-pos").innerText = pos;
+        document.getElementById("m-score").innerText = score;
+        document.getElementById("m-r1").innerText = r1;
+        document.getElementById("m-r2").innerText = r2;
+        document.getElementById("m-r3").innerText = r3;
+        document.getElementById("m-r4").innerText = r4;
+        
+        let modal = document.getElementById("golferModal");
+        modal.classList.add("show");
+    };
+
+    window.cerrarModal = function(e, force = false) {
+        if (force || e.target.id === 'golferModal') {
+            document.getElementById("golferModal").classList.remove("show");
         }
     };
 
@@ -352,7 +400,6 @@
     // ==========================================
     function calcularGananciasGolfistas(leaderboardArray) {
         leaderboardArray.sort((a, b) => a.scoreVal - b.scoreVal);
-
         let mapaGanancias = {};
         let posicionActual = 0; 
 
@@ -363,27 +410,21 @@
             for (let i = posicionActual; i < leaderboardArray.length; i++) {
                 if (leaderboardArray[i].scoreVal === scoreActual) {
                     empatados.push(leaderboardArray[i].nombreOriginal);
-                } else {
-                    break;
-                }
+                } else { break; }
             }
 
             let numEmpatados = empatados.length;
             let sumaPremiosEmpate = 0;
-
             for (let i = 0; i < numEmpatados; i++) {
                 sumaPremiosEmpate += premiosOficiales[posicionActual + i] || 0; 
             }
 
             let gananciaPromedio = scoreActual === 999 ? 0 : sumaPremiosEmpate / numEmpatados;
-
             empatados.forEach(jugador => {
                 mapaGanancias[normalizarNombre(jugador)] = gananciaPromedio;
             });
-
             posicionActual += numEmpatados;
         }
-
         return mapaGanancias;
     }
 
@@ -394,10 +435,8 @@
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
-
             let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
             
-            // Renderizar Información del Campo (Idea Wow #4)
             if (event.courses && event.courses.length > 0) {
                 let c = event.courses[0];
                 document.getElementById("courseInfo").innerText = `⛳ ${c.name} • Par ${c.shotsToPar} • ${c.totalYards} Yds`;
@@ -420,7 +459,6 @@
                 let nombre = comp.athlete.displayName;
                 let normNombre = normalizarNombre(nombre);
                 
-                // Extraer Score oficial desde "statistics"
                 let scoreStr = "E";
                 let scoreToParStat = comp.statistics ? comp.statistics.find(s => s.name === "scoreToPar") : null;
                 
@@ -462,16 +500,13 @@
                     }
                 }
 
-                // Extraer Ronda por Ronda (Idea Wow #3)
                 let rounds = ["--", "--", "--", "--"];
                 if (comp.linescores) {
                     comp.linescores.forEach(ls => {
-                        if (ls.period && ls.period <= 4 && ls.value) rounds[ls.period - 1] = ls.value;
+                        if (ls.period && ls.period <= 4 && ls.value) rounds[ls.period - 1] = ls.displayValue || ls.value;
                     });
                 }
-                let tooltipRondas = `Tarjetas: R1: ${rounds[0]} | R2: ${rounds[1]} | R3: ${rounds[2]} | R4: ${rounds[3]}`;
 
-                // Movimiento de posiciones (Idea Wow #2)
                 let movement = comp.movement || 0;
                 let movHtml = "";
                 if (tourneyStateCode !== "pre") {
@@ -480,8 +515,7 @@
                     else movHtml = `<span class="mov-flat">-</span>`;
                 }
 
-                // Headshot (Idea Wow #1)
-                let headshot = comp.athlete.headshot ? comp.athlete.headshot.href : "";
+                let headshot = comp.athlete.headshot ? comp.athlete.headshot.href : "https://a.espncdn.com/i/headshots/golf/players/full/default.png";
 
                 let infoJugador = {
                     nombreOriginal: nombre,
@@ -494,7 +528,7 @@
                     noHaDebutado: noHaDebutado,
                     teeTimeRaw: rawTeeTime,
                     headshot: headshot,
-                    tooltipRondas: tooltipRondas,
+                    rondas: rounds,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                 };
 
@@ -510,7 +544,7 @@
             let resultadosPolla = participantes.map(part => {
                 let totalAcumulado = 0;
                 let picksDetallados = [];
-                let isHunt = false; // Bandera para saber si el participante "está en la caza"
+                let isHunt = false; 
 
                 part.picks.forEach(jugador => {
                     let norm = normalizarNombre(jugador);
@@ -518,7 +552,8 @@
                     let datosVisuales = mapaDatosVisuales[norm] || {
                         nombreOriginal: jugador, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
                         thru: "No encontrado", isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
-                        headshot: "", tooltipRondas: "Sin datos", flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                        headshot: "https://a.espncdn.com/i/headshots/golf/players/full/default.png", 
+                        rondas: ["--","--","--","--"], flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                     };
 
                     let ganancia = gananciasPorJugador[norm] || 0; 
@@ -526,32 +561,24 @@
 
                     totalAcumulado += ganancia;
 
-                    // Idea Wow #6: En la Caza (Si algún jugador es Top 3)
                     if (["1", "T1", "2", "T2", "3", "T3"].includes(datosVisuales.posOriginal)) {
                         isHunt = true;
                     }
 
-                    picksDetallados.push({
-                        ...datosVisuales,
-                        gananciaCalculada: ganancia
-                    });
+                    picksDetallados.push({ ...datosVisuales, gananciaCalculada: ganancia });
                 });
 
-                // Ordenar interno
                 if (tourneyStateCode === "pre") {
                     picksDetallados.sort((a, b) => new Date(a.teeTimeRaw).getTime() - new Date(b.teeTimeRaw).getTime());
                 } else {
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
-                }
-
-                // Asignar MVP y Saco de Sal (Idea Wow #5)
-                if (tourneyStateCode !== "pre") {
-                    // El primero de la lista ordenada (si gana algo) es MVP
-                    if (picksDetallados[0].gananciaCalculada > 0) {
-                        picksDetallados[0].isMVP = true;
+                    
+                    // CORRECCIÓN: Filtrar solo a los que ya debutaron para repartir MVP y Saco de Sal
+                    let activos = picksDetallados.filter(p => !p.noHaDebutado);
+                    if (activos.length > 0) {
+                        if (activos[0].gananciaCalculada > 0) activos[0].isMVP = true;
+                        activos[activos.length - 1].isAnchor = true;
                     }
-                    // El último de la lista es el Ancla (Saco de Sal)
-                    picksDetallados[picksDetallados.length - 1].isAnchor = true;
                 }
 
                 return {
@@ -574,8 +601,6 @@
                     if (index === 0) cardClass += " place-1";
                     if (index === 1) cardClass += " place-2";
                 }
-
-                // Añadir efecto de "En la caza" si tiene jugadores en el Top 3
                 if (resultado.isHunt) cardClass += " on-the-hunt";
 
                 let picksHTML = resultado.picks.map(p => {
@@ -586,19 +611,17 @@
                     
                     let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
                     
-                    // Fallback para la foto (una imagen por defecto de ESPN)
-                    let fotoUrl = p.headshot ? p.headshot : "https://a.espncdn.com/i/headshots/golf/players/full/default.png";
-
-                    // Íconos MVP y Saco de sal
                     let specialBadge = "";
                     if (p.isMVP) specialBadge = `<span class="special-badge" title="MVP del equipo">🔥</span>`;
                     if (p.isAnchor) specialBadge = `<span class="special-badge" title="Saco de sal">🥶</span>`;
 
+                    let nEscaped = p.nombreOriginal.replace(/'/g, "\\'");
+
                     return `
-                        <div class="golfer-item" title="${p.tooltipRondas}">
+                        <div class="golfer-item" onclick="abrirModal('${nEscaped}', '${p.headshot}', '${p.flag}', '${p.rondas[0]}', '${p.rondas[1]}', '${p.rondas[2]}', '${p.rondas[3]}', '${p.posOriginal}', '${p.scoreStr}')">
                             <div class="golfer-top">
                                 <div class="headshot-container">
-                                    <img src="${fotoUrl}" class="headshot-img" onerror="this.src='https://a.espncdn.com/i/headshots/golf/players/full/default.png'">
+                                    <img src="${p.headshot}" class="headshot-img" onerror="this.src='https://a.espncdn.com/i/headshots/golf/players/full/default.png'">
                                     <img src="${p.flag}" class="flag-small" onerror="this.style.display='none'">
                                 </div>
                                 <div class="golfer-name-wrapper">
