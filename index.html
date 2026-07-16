@@ -34,7 +34,16 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .header h1 { margin: 0 0 10px 0; font-size: 2.5em; }
+        .header h1 { margin: 0 0 5px 0; font-size: 2.5em; }
+        
+        .course-info {
+            font-size: 0.9em;
+            color: #b0c4de;
+            margin-bottom: 15px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
         .tournament-status { color: var(--accent-color); font-weight: bold; font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;}
         
         .prizes {
@@ -63,11 +72,22 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             border-left: 6px solid #ccc;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
         }
         .participant-card:hover { transform: translateY(-3px); }
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
+
+        /* EFECTO "EN LA CAZA" (On The Hunt) */
+        @keyframes golden-glow {
+            0% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(229, 177, 34, 0.6); }
+            100% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
+        }
+        .on-the-hunt {
+            border: 2px solid var(--accent-color);
+            animation: golden-glow 2.5s infinite;
+        }
 
         .card-header {
             display: flex;
@@ -106,9 +126,7 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        .hidden-grid {
-            display: none !important; 
-        }
+        .hidden-grid { display: none !important; }
 
         .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
         .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
@@ -116,7 +134,7 @@
 
         .golfers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
         }
         .golfer-item {
@@ -126,23 +144,61 @@
             display: flex;
             flex-direction: column;
             border: 1px solid #e0e0e0;
+            position: relative;
+            cursor: help; /* Indica que hay tooltip disponible */
         }
-        .golfer-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px;}
-        .golfer-top img { width: 24px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
-        .golfer-name { font-weight: 600; font-size: 1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; }
+        .golfer-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;}
+        
+        /* ROSTROS Y BANDERAS */
+        .headshot-container {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+        .headshot-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+        }
+        .flag-small {
+            position: absolute;
+            bottom: -2px;
+            right: -5px;
+            width: 18px;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .golfer-name-wrapper {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .golfer-name { font-weight: 700; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-color);}
+        .special-badge { font-size: 0.8em; }
+
+        .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; margin-top: 5px; }
+        
+        /* FLECHAS DE MOVIMIENTO */
+        .pos-wrapper { display: flex; align-items: center; gap: 5px; }
+        .golfer-pos { color: var(--text-dark); font-weight: 900; font-size: 1.1em;}
+        .mov-up { color: #2e7d32; font-size: 0.75em; font-weight: bold;}
+        .mov-down { color: #d32f2f; font-size: 0.75em; font-weight: bold;}
+        .mov-flat { color: #9e9e9e; font-size: 0.75em; font-weight: bold;}
+
         .score-box { background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;}
         .score-box.over-par { background: #d32f2f; }
         .score-box.even-par { background: #757575; }
         .score-box.cut { background: #000000; }
         
-        .golfer-pos { color: var(--text-light); font-weight: bold; }
-        
         .golfer-thru { 
             font-size: 0.85em; 
             color: var(--text-light); 
-            margin-top: 5px; 
+            margin-top: 8px; 
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -164,7 +220,7 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
         }
 
-        .golfer-earnings { margin-top: 8px; font-weight: bold; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px;}
+        .golfer-earnings { margin-top: 8px; font-weight: 900; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px; font-size: 1.1em;}
 
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -186,6 +242,8 @@
 <div class="container">
     <div class="header">
         <h1>🏆 Polla The Open Championship 2026</h1>
+        <!-- FICHA TÉCNICA DEL CAMPO -->
+        <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
         <div class="prizes">
@@ -253,7 +311,6 @@
     // ==========================================
     // 2. UTILIDADES Y ESTADO VISUAL
     // ==========================================
-    
     const participantesColapsados = new Set();
 
     window.toggleTarjeta = function(nombreParticipante, elementoCabecera) {
@@ -340,6 +397,12 @@
 
             let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
             
+            // Renderizar Información del Campo (Idea Wow #4)
+            if (event.courses && event.courses.length > 0) {
+                let c = event.courses[0];
+                document.getElementById("courseInfo").innerText = `⛳ ${c.name} • Par ${c.shotsToPar} • ${c.totalYards} Yds`;
+            }
+
             let tourneyStateDesc = event.status.type.description; 
             let tourneyStateCode = event.status.type.state;       
             
@@ -377,9 +440,6 @@
                 
                 let thruInfo = "";
                 let isLive = false;
-                
-                // Identificar si el jugador ya pegó su primer tiro del campeonato
-                // Period <= 1 (Ronda 1) y estado "pre" significa que está en el hotel
                 let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
 
                 if (tourneyStateCode === "pre") {
@@ -402,15 +462,39 @@
                     }
                 }
 
+                // Extraer Ronda por Ronda (Idea Wow #3)
+                let rounds = ["--", "--", "--", "--"];
+                if (comp.linescores) {
+                    comp.linescores.forEach(ls => {
+                        if (ls.period && ls.period <= 4 && ls.value) rounds[ls.period - 1] = ls.value;
+                    });
+                }
+                let tooltipRondas = `Tarjetas: R1: ${rounds[0]} | R2: ${rounds[1]} | R3: ${rounds[2]} | R4: ${rounds[3]}`;
+
+                // Movimiento de posiciones (Idea Wow #2)
+                let movement = comp.movement || 0;
+                let movHtml = "";
+                if (tourneyStateCode !== "pre") {
+                    if (movement > 0) movHtml = `<span class="mov-up">▲${movement}</span>`;
+                    else if (movement < 0) movHtml = `<span class="mov-down">▼${Math.abs(movement)}</span>`;
+                    else movHtml = `<span class="mov-flat">-</span>`;
+                }
+
+                // Headshot (Idea Wow #1)
+                let headshot = comp.athlete.headshot ? comp.athlete.headshot.href : "";
+
                 let infoJugador = {
                     nombreOriginal: nombre,
                     scoreVal: scoreNum,
-                    scoreStr: noHaDebutado ? "-" : scoreStr, // Guion visual si no ha jugado
-                    pos: comp.status.position ? comp.status.position.displayName : "-",
+                    scoreStr: noHaDebutado ? "-" : scoreStr, 
+                    posOriginal: comp.status.position ? comp.status.position.displayName : "-",
+                    movHtml: movHtml,
                     thru: thruInfo,
                     isLive: isLive,
-                    noHaDebutado: noHaDebutado, // Nueva bandera
+                    noHaDebutado: noHaDebutado,
                     teeTimeRaw: rawTeeTime,
+                    headshot: headshot,
+                    tooltipRondas: tooltipRondas,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                 };
 
@@ -426,24 +510,26 @@
             let resultadosPolla = participantes.map(part => {
                 let totalAcumulado = 0;
                 let picksDetallados = [];
+                let isHunt = false; // Bandera para saber si el participante "está en la caza"
 
                 part.picks.forEach(jugador => {
                     let norm = normalizarNombre(jugador);
                     
                     let datosVisuales = mapaDatosVisuales[norm] || {
-                        nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
-                        isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
-                        flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                        nombreOriginal: jugador, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
+                        thru: "No encontrado", isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
+                        headshot: "", tooltipRondas: "Sin datos", flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                     };
 
                     let ganancia = gananciasPorJugador[norm] || 0; 
-                    
-                    // APLICACIÓN DE REGLA: Si no ha debutado, se enmascara la ganancia en $0
-                    if (datosVisuales.noHaDebutado) {
-                        ganancia = 0;
-                    }
+                    if (datosVisuales.noHaDebutado) ganancia = 0;
 
                     totalAcumulado += ganancia;
+
+                    // Idea Wow #6: En la Caza (Si algún jugador es Top 3)
+                    if (["1", "T1", "2", "T2", "3", "T3"].includes(datosVisuales.posOriginal)) {
+                        isHunt = true;
+                    }
 
                     picksDetallados.push({
                         ...datosVisuales,
@@ -451,16 +537,28 @@
                     });
                 });
 
+                // Ordenar interno
                 if (tourneyStateCode === "pre") {
                     picksDetallados.sort((a, b) => new Date(a.teeTimeRaw).getTime() - new Date(b.teeTimeRaw).getTime());
                 } else {
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
                 }
 
+                // Asignar MVP y Saco de Sal (Idea Wow #5)
+                if (tourneyStateCode !== "pre") {
+                    // El primero de la lista ordenada (si gana algo) es MVP
+                    if (picksDetallados[0].gananciaCalculada > 0) {
+                        picksDetallados[0].isMVP = true;
+                    }
+                    // El último de la lista es el Ancla (Saco de Sal)
+                    picksDetallados[picksDetallados.length - 1].isAnchor = true;
+                }
+
                 return {
                     nombre: part.nombre,
                     total: totalAcumulado,
-                    picks: picksDetallados
+                    picks: picksDetallados,
+                    isHunt: (isHunt && tourneyStateCode !== "pre")
                 };
             });
 
@@ -477,6 +575,9 @@
                     if (index === 1) cardClass += " place-2";
                 }
 
+                // Añadir efecto de "En la caza" si tiene jugadores en el Top 3
+                if (resultado.isHunt) cardClass += " on-the-hunt";
+
                 let picksHTML = resultado.picks.map(p => {
                     let scoreClass = "";
                     if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
@@ -484,15 +585,31 @@
                     else if (p.scoreStr === "E" || p.scoreStr === "-") scoreClass = "even-par";
                     
                     let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
+                    
+                    // Fallback para la foto (una imagen por defecto de ESPN)
+                    let fotoUrl = p.headshot ? p.headshot : "https://a.espncdn.com/i/headshots/golf/players/full/default.png";
+
+                    // Íconos MVP y Saco de sal
+                    let specialBadge = "";
+                    if (p.isMVP) specialBadge = `<span class="special-badge" title="MVP del equipo">🔥</span>`;
+                    if (p.isAnchor) specialBadge = `<span class="special-badge" title="Saco de sal">🥶</span>`;
 
                     return `
-                        <div class="golfer-item">
+                        <div class="golfer-item" title="${p.tooltipRondas}">
                             <div class="golfer-top">
-                                <img src="${p.flag}" alt="flag" onerror="this.style.display='none'">
-                                <div class="golfer-name" title="${p.nombreOriginal}">${p.nombreOriginal}</div>
+                                <div class="headshot-container">
+                                    <img src="${fotoUrl}" class="headshot-img" onerror="this.src='https://a.espncdn.com/i/headshots/golf/players/full/default.png'">
+                                    <img src="${p.flag}" class="flag-small" onerror="this.style.display='none'">
+                                </div>
+                                <div class="golfer-name-wrapper">
+                                    <div class="golfer-name">${p.nombreOriginal} ${specialBadge}</div>
+                                </div>
                             </div>
                             <div class="golfer-stats">
-                                <span class="golfer-pos">${p.pos}</span>
+                                <div class="pos-wrapper">
+                                    <span class="golfer-pos">${p.posOriginal}</span>
+                                    ${p.movHtml}
+                                </div>
                                 <span class="score-box ${scoreClass}">${p.scoreStr}</span>
                             </div>
                             <div class="golfer-thru">
