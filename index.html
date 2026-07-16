@@ -69,9 +69,6 @@
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
 
-        /* ==========================================
-           NUEVOS ESTILOS PARA COLAPSAR/DESPLEGAR
-           ========================================== */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -79,14 +76,14 @@
             border-bottom: 2px solid #eee;
             padding-bottom: 15px;
             margin-bottom: 15px;
-            cursor: pointer; /* Cambia el cursor a una manito */
-            user-select: none; /* Evita que el texto se sombree al hacer clics rápidos */
+            cursor: pointer; 
+            user-select: none; 
         }
         
         .participant-total-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px; /* Espacio entre el dinero y el botón +/- */
+            gap: 15px; 
         }
 
         .toggle-btn {
@@ -100,19 +97,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: titilar 2s infinite ease-in-out; /* Animación de titileo */
+            animation: titilar-boton 2s infinite ease-in-out;
         }
 
-        @keyframes titilar {
+        @keyframes titilar-boton {
             0% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 10px rgba(229, 177, 34, 0.5); }
             100% { opacity: 1; transform: scale(1); }
         }
 
         .hidden-grid {
-            display: none !important; /* Oculta la cuadrícula de jugadores */
+            display: none !important; 
         }
-        /* ========================================== */
 
         .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
         .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
@@ -142,10 +138,36 @@
         .score-box.cut { background: #000000; }
         
         .golfer-pos { color: var(--text-light); font-weight: bold; }
-        .golfer-thru { font-size: 0.8em; color: var(--text-light); margin-top: 5px; text-align: right;}
+        
+        /* NUEVO: Contenedor para el indicador EN VIVO y el Hoyo */
+        .golfer-thru { 
+            font-size: 0.85em; 
+            color: var(--text-light); 
+            margin-top: 5px; 
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        /* NUEVO: Punto rojo titilante */
+        .live-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #ff3b30;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            animation: pulse-red 1.5s infinite;
+        }
+        
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+        }
+
         .golfer-earnings { margin-top: 8px; font-weight: bold; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px;}
 
-        /* REGLAS RESPONSIVAS PARA CELULARES */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .header { padding: 20px 15px; }
@@ -153,7 +175,7 @@
             .tournament-status { font-size: 0.85em; }
             .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
             .participant-card { padding: 15px; }
-            .card-header { flex-wrap: nowrap; gap: 8px; } /* Mantener en una línea con el botón */
+            .card-header { flex-wrap: nowrap; gap: 8px; } 
             .participant-name { font-size: 1.3em; }
             .participant-total { font-size: 1.4em; }
             .golfers-grid { grid-template-columns: 1fr; }
@@ -226,22 +248,17 @@
     // 2. UTILIDADES Y ESTADO VISUAL
     // ==========================================
     
-    // Set (memoria) para recordar qué participantes el usuario ha colapsado
     const participantesColapsados = new Set();
 
-    // Función que se ejecuta al darle clic a la cabecera de la tarjeta
     window.toggleTarjeta = function(nombreParticipante, elementoCabecera) {
-        // Obtenemos la cuadrícula (el elemento que sigue inmediatamente después de la cabecera)
         const cuadricula = elementoCabecera.nextElementSibling;
         const botonToggle = elementoCabecera.querySelector('.toggle-btn');
 
         if (participantesColapsados.has(nombreParticipante)) {
-            // Estaba colapsado, lo vamos a desplegar
             participantesColapsados.delete(nombreParticipante);
             cuadricula.classList.remove('hidden-grid');
             botonToggle.innerText = "-";
         } else {
-            // Estaba desplegado, lo vamos a colapsar
             participantesColapsados.add(nombreParticipante);
             cuadricula.classList.add('hidden-grid');
             botonToggle.innerText = "+";
@@ -343,13 +360,30 @@
                 let horaColombia = formatearHoraColombia(comp.status.teeTime);
                 let rawTeeTime = comp.status.teeTime || "9999-12-31T23:59Z"; 
                 
+                // === NUEVA LÓGICA DE ESTADO (EN VIVO / HOYO) ===
                 let thruInfo = "";
+                let isLive = false;
+
                 if (tourneyStateCode === "pre") {
                     thruInfo = "Tee: " + horaColombia + " COL"; 
                 } else {
-                    if (comp.status.type.completed || scoreStr === "CUT" || scoreStr === "WD") {
-                        thruInfo = scoreStr === "CUT" ? "Falló Corte" : (scoreStr === "WD" ? "Retirado" : "F");
+                    if (scoreStr === "CUT") {
+                        thruInfo = "Falló Corte";
+                    } else if (scoreStr === "WD") {
+                        thruInfo = "Retirado";
+                    } else if (comp.status.type.completed || comp.status.type.state === "post") {
+                        thruInfo = "Casa Club (F)";
+                    } else if (comp.status.type.state === "in") {
+                        isLive = true;
+                        // Si thru es 0, apenas va a salir al hoyo 1. Si thru es 1, está en el hoyo 2.
+                        let hoyoActual = comp.status.thru + 1;
+                        if (hoyoActual > 18) hoyoActual = 18; 
+                        thruInfo = "Jugando Hoyo " + hoyoActual;
+                    } else if (comp.status.type.state === "pre") {
+                        // Jugador que juega más tarde hoy
+                        thruInfo = "Tee: " + horaColombia + " COL";
                     } else {
+                        // Fallback seguro
                         thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + horaColombia + " COL";
                     }
                 }
@@ -360,6 +394,7 @@
                     scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, 
                     pos: comp.status.position ? comp.status.position.displayName : "-",
                     thru: thruInfo,
+                    isLive: isLive,
                     teeTimeRaw: rawTeeTime,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                 };
@@ -384,7 +419,7 @@
 
                     let datosVisuales = mapaDatosVisuales[norm] || {
                         nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
-                        teeTimeRaw: "9999-12-31T23:59Z",
+                        isLive: false, teeTimeRaw: "9999-12-31T23:59Z",
                         flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                     };
 
@@ -425,6 +460,9 @@
                     if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
                     else if (p.scoreStr.includes("+")) scoreClass = "over-par";
                     else if (p.scoreStr === "E") scoreClass = "even-par";
+                    
+                    // Indicador de Juego en Vivo
+                    let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
 
                     return `
                         <div class="golfer-item">
@@ -436,13 +474,15 @@
                                 <span class="golfer-pos">${p.pos}</span>
                                 <span class="score-box ${scoreClass}">${p.scoreStr}</span>
                             </div>
-                            <div class="golfer-thru">${p.thru}</div>
+                            <div class="golfer-thru">
+                                ${liveHtml}
+                                ${p.thru}
+                            </div>
                             <div class="golfer-earnings">${"$" + p.gananciaCalculada.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
                         </div>
                     `;
                 }).join('');
 
-                // Determinar si en la "memoria" este participante estaba colapsado
                 let estaColapsado = participantesColapsados.has(resultado.nombre);
                 let gridClass = estaColapsado ? "hidden-grid" : "";
                 let toggleSymbol = estaColapsado ? "+" : "-";
@@ -452,7 +492,6 @@
                 
                 let positionLabel = tourneyStateCode === "pre" ? "-" : `#${index + 1}`;
 
-                // Agregamos el evento onclick en el header
                 div.innerHTML = `
                     <div class="card-header" onclick="toggleTarjeta('${resultado.nombre}', this)">
                         <div class="participant-name"><span>${positionLabel}</span>${resultado.nombre}</div>
