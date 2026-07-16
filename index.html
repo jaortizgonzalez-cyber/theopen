@@ -69,6 +69,9 @@
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
 
+        /* ==========================================
+           NUEVOS ESTILOS PARA COLAPSAR/DESPLEGAR
+           ========================================== */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -76,7 +79,41 @@
             border-bottom: 2px solid #eee;
             padding-bottom: 15px;
             margin-bottom: 15px;
+            cursor: pointer; /* Cambia el cursor a una manito */
+            user-select: none; /* Evita que el texto se sombree al hacer clics rápidos */
         }
+        
+        .participant-total-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Espacio entre el dinero y el botón +/- */
+        }
+
+        .toggle-btn {
+            font-size: 1.8em;
+            font-weight: 900;
+            color: var(--accent-color);
+            background: var(--primary-color);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: titilar 2s infinite ease-in-out; /* Animación de titileo */
+        }
+
+        @keyframes titilar {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 10px rgba(229, 177, 34, 0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .hidden-grid {
+            display: none !important; /* Oculta la cuadrícula de jugadores */
+        }
+        /* ========================================== */
+
         .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
         .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
         .participant-total { font-size: 1.8em; font-weight: 900; color: #2e7d32; }
@@ -110,39 +147,17 @@
 
         /* REGLAS RESPONSIVAS PARA CELULARES */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .header {
-                padding: 20px 15px;
-            }
-            .header h1 {
-                font-size: 1.8em;
-            }
-            .tournament-status {
-                font-size: 0.85em;
-            }
-            .prizes {
-                flex-direction: column;
-                gap: 12px;
-                font-size: 1em;
-            }
-            .participant-card {
-                padding: 15px;
-            }
-            .card-header {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            .participant-name {
-                font-size: 1.3em;
-            }
-            .participant-total {
-                font-size: 1.4em;
-            }
-            .golfers-grid {
-                grid-template-columns: 1fr;
-            }
+            body { padding: 10px; }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 1.8em; }
+            .tournament-status { font-size: 0.85em; }
+            .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
+            .participant-card { padding: 15px; }
+            .card-header { flex-wrap: nowrap; gap: 8px; } /* Mantener en una línea con el botón */
+            .participant-name { font-size: 1.3em; }
+            .participant-total { font-size: 1.4em; }
+            .golfers-grid { grid-template-columns: 1fr; }
+            .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
         }
     </style>
 </head>
@@ -154,9 +169,9 @@
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
         <div class="prizes">
-            <div>Bolsa de la Polla: <span id="totalPool">$500,000</span></div>
-            <div>1er Puesto (70%): <span id="firstPrize">$350,000</span></div>
-            <div>2do Puesto (30%): <span id="secondPrize">$150,000</span></div>
+            <div>Bolsa de la Polla: <span id="totalPool">$0</span></div>
+            <div>1er Puesto (70%): <span id="firstPrize">$0</span></div>
+            <div>2do Puesto (30%): <span id="secondPrize">$0</span></div>
         </div>
     </div>
 
@@ -171,7 +186,7 @@
     // ==========================================
     // 1. CONFIGURACIÓN DE LA POLLA
     // ==========================================
-    const CUOTA_INSCRIPCION = 50000; // Valor que aporta cada participante
+    const CUOTA_INSCRIPCION = 50000; 
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
     // PARTICIPANTES REALES
@@ -194,7 +209,6 @@
         }
     ];
 
-    // Cálculo dinámico de la Bolsa Total
     const BOLSA_TOTAL = CUOTA_INSCRIPCION * participantes.length;
 
     // BOLSAS OFICIALES THE OPEN 2026 (En USD).
@@ -209,8 +223,31 @@
     ];
 
     // ==========================================
-    // 2. UTILIDADES
+    // 2. UTILIDADES Y ESTADO VISUAL
     // ==========================================
+    
+    // Set (memoria) para recordar qué participantes el usuario ha colapsado
+    const participantesColapsados = new Set();
+
+    // Función que se ejecuta al darle clic a la cabecera de la tarjeta
+    window.toggleTarjeta = function(nombreParticipante, elementoCabecera) {
+        // Obtenemos la cuadrícula (el elemento que sigue inmediatamente después de la cabecera)
+        const cuadricula = elementoCabecera.nextElementSibling;
+        const botonToggle = elementoCabecera.querySelector('.toggle-btn');
+
+        if (participantesColapsados.has(nombreParticipante)) {
+            // Estaba colapsado, lo vamos a desplegar
+            participantesColapsados.delete(nombreParticipante);
+            cuadricula.classList.remove('hidden-grid');
+            botonToggle.innerText = "-";
+        } else {
+            // Estaba desplegado, lo vamos a colapsar
+            participantesColapsados.add(nombreParticipante);
+            cuadricula.classList.add('hidden-grid');
+            botonToggle.innerText = "+";
+        }
+    };
+
     function normalizarNombre(nombre) {
         return nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     }
@@ -219,7 +256,6 @@
         return "$" + amount.toLocaleString('es-CO', {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
 
-    // Convertidor de Tiempo Universal (Z) a Horario de Colombia
     function formatearHoraColombia(isoString) {
         if (!isoString) return "TBD";
         const date = new Date(isoString);
@@ -305,6 +341,7 @@
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
 
                 let horaColombia = formatearHoraColombia(comp.status.teeTime);
+                let rawTeeTime = comp.status.teeTime || "9999-12-31T23:59Z"; 
                 
                 let thruInfo = "";
                 if (tourneyStateCode === "pre") {
@@ -323,6 +360,7 @@
                     scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, 
                     pos: comp.status.position ? comp.status.position.displayName : "-",
                     thru: thruInfo,
+                    teeTimeRaw: rawTeeTime,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                 };
 
@@ -346,6 +384,7 @@
 
                     let datosVisuales = mapaDatosVisuales[norm] || {
                         nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
+                        teeTimeRaw: "9999-12-31T23:59Z",
                         flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                     };
 
@@ -355,7 +394,9 @@
                     });
                 });
 
-                if (tourneyStateCode !== "pre") {
+                if (tourneyStateCode === "pre") {
+                    picksDetallados.sort((a, b) => new Date(a.teeTimeRaw).getTime() - new Date(b.teeTimeRaw).getTime());
+                } else {
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
                 }
 
@@ -401,17 +442,26 @@
                     `;
                 }).join('');
 
+                // Determinar si en la "memoria" este participante estaba colapsado
+                let estaColapsado = participantesColapsados.has(resultado.nombre);
+                let gridClass = estaColapsado ? "hidden-grid" : "";
+                let toggleSymbol = estaColapsado ? "+" : "-";
+
                 const div = document.createElement("div");
                 div.className = cardClass;
                 
                 let positionLabel = tourneyStateCode === "pre" ? "-" : `#${index + 1}`;
 
+                // Agregamos el evento onclick en el header
                 div.innerHTML = `
-                    <div class="card-header">
+                    <div class="card-header" onclick="toggleTarjeta('${resultado.nombre}', this)">
                         <div class="participant-name"><span>${positionLabel}</span>${resultado.nombre}</div>
-                        <div class="participant-total">${"$" + resultado.total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                        <div class="participant-total-wrapper">
+                            <div class="participant-total">${"$" + resultado.total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                            <div class="toggle-btn">${toggleSymbol}</div>
+                        </div>
                     </div>
-                    <div class="golfers-grid">
+                    <div class="golfers-grid ${gridClass}">
                         ${picksHTML}
                     </div>
                 `;
@@ -427,7 +477,6 @@
         }
     }
 
-    // Inicializar valores de premios en la cabecera
     document.getElementById("totalPool").innerText = formatMoney(BOLSA_TOTAL);
     document.getElementById("firstPrize").innerText = formatMoney(BOLSA_TOTAL * 0.70);
     document.getElementById("secondPrize").innerText = formatMoney(BOLSA_TOTAL * 0.30);
