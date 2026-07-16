@@ -139,7 +139,6 @@
         
         .golfer-pos { color: var(--text-light); font-weight: bold; }
         
-        /* NUEVO: Contenedor para el indicador EN VIVO y el Hoyo */
         .golfer-thru { 
             font-size: 0.85em; 
             color: var(--text-light); 
@@ -149,7 +148,6 @@
             align-items: center;
         }
         
-        /* NUEVO: Punto rojo titilante */
         .live-dot {
             height: 10px;
             width: 10px;
@@ -211,11 +209,11 @@
     const CUOTA_INSCRIPCION = 50000; 
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
-    // PARTICIPANTES REALES
+    // PARTICIPANTES REALES COMPLETOS
     const participantes = [
         { 
             nombre: "Ronnie Sanchez", 
-            picks: ["Caballo1", "Caballo2", "Caballo3", "Caballo4", "Caballo5"] 
+            picks: ["Scottie Scheffler", "Rory McIlroy", "Xander Schauffele", "Matt Fitzpatrick", "Ludvig Aberg"] 
         },
         { 
             nombre: "Juan Ardila", 
@@ -228,6 +226,14 @@
         { 
             nombre: "Andrés Ortiz", 
             picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Xander Schauffele", "Tommy Fleetwood"] 
+        },
+        {
+            nombre: "Fernando Fierro",
+            picks: ["Robert MacIntyre", "Akshay Bhatia", "Min Woo Lee", "Shane Lowry", "Rory McIlroy"]
+        },
+        {
+            nombre: "Paul Franco",
+            picks: ["Matt Fitzpatrick", "Rory McIlroy", "Patrick Cantlay", "Maverick McNealy", "Scottie Scheffler"]
         }
     ];
 
@@ -360,7 +366,6 @@
                 let horaColombia = formatearHoraColombia(comp.status.teeTime);
                 let rawTeeTime = comp.status.teeTime || "9999-12-31T23:59Z"; 
                 
-                // === NUEVA LÓGICA DE ESTADO (EN VIVO / HOYO) ===
                 let thruInfo = "";
                 let isLive = false;
 
@@ -375,15 +380,12 @@
                         thruInfo = "Casa Club (F)";
                     } else if (comp.status.type.state === "in") {
                         isLive = true;
-                        // Si thru es 0, apenas va a salir al hoyo 1. Si thru es 1, está en el hoyo 2.
                         let hoyoActual = comp.status.thru + 1;
                         if (hoyoActual > 18) hoyoActual = 18; 
                         thruInfo = "Jugando Hoyo " + hoyoActual;
                     } else if (comp.status.type.state === "pre") {
-                        // Jugador que juega más tarde hoy
                         thruInfo = "Tee: " + horaColombia + " COL";
                     } else {
-                        // Fallback seguro
                         thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + horaColombia + " COL";
                     }
                 }
@@ -461,7 +463,6 @@
                     else if (p.scoreStr.includes("+")) scoreClass = "over-par";
                     else if (p.scoreStr === "E") scoreClass = "even-par";
                     
-                    // Indicador de Juego en Vivo
                     let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
 
                     return `
