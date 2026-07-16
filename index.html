@@ -171,7 +171,7 @@
     // ==========================================
     // 1. CONFIGURACIÓN DE LA POLLA
     // ==========================================
-    const VALOR_POLLA = 50000; 
+    const CUOTA_INSCRIPCION = 50000; // Valor que aporta cada participante
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
     // PARTICIPANTES REALES
@@ -194,6 +194,9 @@
         }
     ];
 
+    // Cálculo dinámico de la Bolsa Total
+    const BOLSA_TOTAL = CUOTA_INSCRIPCION * participantes.length;
+
     // BOLSAS OFICIALES THE OPEN 2026 (En USD).
     const premiosOficiales = [
         3200000, 1842000, 1181000, 917000, 738000, 639700, 549700, 463250, 406200, 367000,
@@ -213,7 +216,7 @@
     }
 
     function formatMoney(amount) {
-        return "$" + amount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+        return "$" + amount.toLocaleString('es-CO', {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
 
     // Convertidor de Tiempo Universal (Z) a Horario de Colombia
@@ -301,7 +304,6 @@
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
 
-                // Aplicar la hora de Colombia extraída del valor .teeTime
                 let horaColombia = formatearHoraColombia(comp.status.teeTime);
                 
                 let thruInfo = "";
@@ -394,7 +396,7 @@
                                 <span class="score-box ${scoreClass}">${p.scoreStr}</span>
                             </div>
                             <div class="golfer-thru">${p.thru}</div>
-                            <div class="golfer-earnings">${formatMoney(p.gananciaCalculada)}</div>
+                            <div class="golfer-earnings">${"$" + p.gananciaCalculada.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
                         </div>
                     `;
                 }).join('');
@@ -407,7 +409,7 @@
                 div.innerHTML = `
                     <div class="card-header">
                         <div class="participant-name"><span>${positionLabel}</span>${resultado.nombre}</div>
-                        <div class="participant-total">${formatMoney(resultado.total)}</div>
+                        <div class="participant-total">${"$" + resultado.total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
                     </div>
                     <div class="golfers-grid">
                         ${picksHTML}
@@ -417,7 +419,7 @@
             });
 
             const now = new Date();
-            document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString()}`;
+            document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString('es-CO')}`;
 
         } catch (error) {
             console.error("Error consultando la API:", error);
@@ -425,9 +427,10 @@
         }
     }
 
-    document.getElementById("totalPool").innerText = formatMoney(VALOR_POLLA);
-    document.getElementById("firstPrize").innerText = formatMoney(VALOR_POLLA * 0.70);
-    document.getElementById("secondPrize").innerText = formatMoney(VALOR_POLLA * 0.30);
+    // Inicializar valores de premios en la cabecera
+    document.getElementById("totalPool").innerText = formatMoney(BOLSA_TOTAL);
+    document.getElementById("firstPrize").innerText = formatMoney(BOLSA_TOTAL * 0.70);
+    document.getElementById("secondPrize").innerText = formatMoney(BOLSA_TOTAL * 0.30);
 
     actualizarPolla();
     setInterval(actualizarPolla, 180000); 
