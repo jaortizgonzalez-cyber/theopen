@@ -356,9 +356,18 @@
             competidoresData.forEach(comp => {
                 let nombre = comp.athlete.displayName;
                 let normNombre = normalizarNombre(nombre);
-                let scoreStr = comp.score ? comp.score.displayValue : "E";
-                let scoreNum = 0;
+                
+                // Extraer Score oficial desde "statistics"
+                let scoreStr = "E";
+                let scoreToParStat = comp.statistics ? comp.statistics.find(s => s.name === "scoreToPar") : null;
+                
+                if (scoreToParStat && scoreToParStat.displayValue && scoreToParStat.displayValue !== "-") {
+                    scoreStr = scoreToParStat.displayValue;
+                } else if (comp.score && comp.score.displayValue && comp.score.displayValue !== "-") {
+                    scoreStr = comp.score.displayValue;
+                }
 
+                let scoreNum = 0;
                 if (scoreStr === "E") scoreNum = 0;
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
@@ -368,6 +377,10 @@
                 
                 let thruInfo = "";
                 let isLive = false;
+                
+                // Identificar si el jugador ya pegó su primer tiro del campeonato
+                // Period <= 1 (Ronda 1) y estado "pre" significa que está en el hotel
+                let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
 
                 if (tourneyStateCode === "pre") {
                     thruInfo = "Tee: " + horaColombia + " COL"; 
@@ -380,9 +393,8 @@
                         thruInfo = "Casa Club (F)";
                     } else if (comp.status.type.state === "in") {
                         isLive = true;
-                        let hoyoActual = comp.status.thru + 1;
-                        if (hoyoActual > 18) hoyoActual = 18; 
-                        thruInfo = "Jugando Hoyo " + hoyoActual;
+                        let thruVal = comp.status.displayThru || comp.status.thru;
+                        thruInfo = "Thru " + thruVal; 
                     } else if (comp.status.type.state === "pre") {
                         thruInfo = "Tee: " + horaColombia + " COL";
                     } else {
@@ -393,10 +405,11 @@
                 let infoJugador = {
                     nombreOriginal: nombre,
                     scoreVal: scoreNum,
-                    scoreStr: tourneyStateCode === "pre" ? "-" : scoreStr, 
+                    scoreStr: noHaDebutado ? "-" : scoreStr, // Guion visual si no ha jugado
                     pos: comp.status.position ? comp.status.position.displayName : "-",
                     thru: thruInfo,
                     isLive: isLive,
+                    noHaDebutado: noHaDebutado, // Nueva bandera
                     teeTimeRaw: rawTeeTime,
                     flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                 };
@@ -416,14 +429,21 @@
 
                 part.picks.forEach(jugador => {
                     let norm = normalizarNombre(jugador);
-                    let ganancia = gananciasPorJugador[norm] || 0; 
-                    totalAcumulado += ganancia;
-
+                    
                     let datosVisuales = mapaDatosVisuales[norm] || {
                         nombreOriginal: jugador, scoreStr: "N/A", pos: "-", thru: "No encontrado", 
-                        isLive: false, teeTimeRaw: "9999-12-31T23:59Z",
+                        isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
                         flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
                     };
+
+                    let ganancia = gananciasPorJugador[norm] || 0; 
+                    
+                    // APLICACIÓN DE REGLA: Si no ha debutado, se enmascara la ganancia en $0
+                    if (datosVisuales.noHaDebutado) {
+                        ganancia = 0;
+                    }
+
+                    totalAcumulado += ganancia;
 
                     picksDetallados.push({
                         ...datosVisuales,
@@ -461,7 +481,7 @@
                     let scoreClass = "";
                     if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
                     else if (p.scoreStr.includes("+")) scoreClass = "over-par";
-                    else if (p.scoreStr === "E") scoreClass = "even-par";
+                    else if (p.scoreStr === "E" || p.scoreStr === "-") scoreClass = "even-par";
                     
                     let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
 
