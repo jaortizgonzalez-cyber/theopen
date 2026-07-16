@@ -44,7 +44,45 @@
             letter-spacing: 0.5px;
         }
 
-        .tournament-status { color: var(--accent-color); font-weight: bold; font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;}
+        .tournament-status { 
+            color: var(--accent-color); 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            letter-spacing: 1px; 
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* SEMÁFORO DE ESTADO */
+        .semaforo {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        .semaforo.verde {
+            background-color: #34C759;
+            box-shadow: 0 0 12px #34C759, 0 0 20px rgba(52,199,89,0.6);
+            animation: pulse-semaforo-verde 2s infinite;
+        }
+        .semaforo.rojo {
+            background-color: #FF3B30;
+            box-shadow: 0 0 10px rgba(255,59,48,0.8);
+        }
+        .semaforo.amarillo {
+            background-color: #FFCC00;
+            box-shadow: 0 0 10px rgba(255,204,0,0.8);
+        }
+
+        @keyframes pulse-semaforo-verde {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+        }
         
         .prizes {
             display: flex;
@@ -63,6 +101,7 @@
             font-size: 0.9em;
             color: var(--text-light);
             margin-bottom: 20px;
+            font-weight: bold;
         }
 
         .participant-card {
@@ -275,6 +314,7 @@
     <div class="header">
         <h1>🏆 Polla The Open Championship 2026</h1>
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
+        <!-- AQUÍ SE INSERTARÁ EL SEMÁFORO JUNTO AL TEXTO -->
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
         <div class="prizes">
@@ -284,6 +324,7 @@
         </div>
     </div>
 
+    <!-- AQUÍ APARECERÁ EL MODO DE REPOSO O EN VIVO -->
     <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
 
     <div id="standingsContainer">
@@ -463,12 +504,10 @@
     }
 
     // ==========================================
-    // 4. MOTOR PRINCIPAL
+    // 4. MOTOR PRINCIPAL Y FRECUENCIA DINÁMICA
     // ==========================================
     async function actualizarPolla() {
         try {
-            // === CACHE BUSTER APLICADO AQUÍ ===
-            // Añadimos el timestamp actual para obligar al navegador a descargar datos frescos de ESPN
             const urlFresco = API_URL + "&t=" + new Date().getTime();
             const response = await fetch(urlFresco, { cache: "no-store" });
             const data = await response.json();
@@ -482,12 +521,11 @@
 
             let tourneyStateDesc = event.status.type.description; 
             let tourneyStateCode = event.status.type.state;       
-            
-            if (tourneyStateCode === "pre") {
-                document.getElementById("tourneyStatus").innerText = "⏳ El torneo aún no ha comenzado (" + tourneyStateDesc + ")";
-            } else {
-                document.getElementById("tourneyStatus").innerText = "⛳ " + tourneyStateDesc;
-            }
+
+            // === LECTURA DEL ESTADO DE LA RONDA ===
+            let compStatusName = event.competitions[0].status.type.name;
+            let compState = event.competitions[0].status.type.state;
+            let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
 
             const competidoresData = event.competitions[0].competitors;
             let golfistasExtraidos = [];
@@ -495,6 +533,27 @@
             
             let nuevoHistorial = {};
             let eventosWow = []; 
+            
+            let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
+
+            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO ===
+            let semaforoClase = "verde";
+            let textoSemaforo = tourneyStateDesc;
+
+            if (tourneyStateCode === "post") {
+                semaforoClase = "rojo";
+            } else if (tourneyStateCode === "pre") {
+                semaforoClase = "amarillo";
+                textoSemaforo = "El torneo aún no ha comenzado (" + tourneyStateDesc + ")";
+            } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+                semaforoClase = "rojo";
+                textoSemaforo = "Ronda Finalizada - " + tourneyStateDesc;
+            } else {
+                semaforoClase = "verde";
+                textoSemaforo = "Ronda en Juego - " + tourneyStateDesc;
+            }
+
+            document.getElementById("tourneyStatus").innerHTML = `<span class="semaforo ${semaforoClase}"></span> ${textoSemaforo}`;
 
             competidoresData.forEach(comp => {
                 let nombre = comp.athlete.displayName;
@@ -742,12 +801,34 @@
                 container.appendChild(div);
             });
 
+            let delay = 180000; // 3 minutos por defecto
+            let mensajeEstado = "";
+
+            if (tourneyStateCode === "post") {
+                delay = null; 
+                mensajeEstado = "🛑 Torneo Finalizado. Consultas detenidas.";
+            } else if (tourneyStateCode === "pre") {
+                delay = 1800000; // 30 minutos
+                mensajeEstado = "💤 Torneo sin iniciar. Reposo (30 min).";
+            } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+                delay = 1800000; // 30 minutos
+                mensajeEstado = "🌙 Ronda finalizada por hoy. Reposo (30 min).";
+            } else {
+                delay = 180000; // 3 minutos
+                mensajeEstado = "⚡ EN VIVO (3 min).";
+            }
+
             const now = new Date();
-            document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString('es-CO')}`;
+            document.getElementById("lastUpdate").innerText = `Actualizado: ${now.toLocaleTimeString('es-CO')} | ${mensajeEstado}`;
+
+            if (delay !== null) {
+                setTimeout(actualizarPolla, delay);
+            }
 
         } catch (error) {
             console.error("Error consultando la API:", error);
-            document.getElementById("lastUpdate").innerText = "Error actualizando datos. Reintentando...";
+            document.getElementById("lastUpdate").innerText = "Error actualizando. Reintentando en 3 min...";
+            setTimeout(actualizarPolla, 180000);
         }
     }
 
@@ -755,8 +836,8 @@
     document.getElementById("firstPrize").innerText = formatMoney(BOLSA_TOTAL * 0.70);
     document.getElementById("secondPrize").innerText = formatMoney(BOLSA_TOTAL * 0.30);
 
+    // Iniciar la primera consulta
     actualizarPolla();
-    setInterval(actualizarPolla, 180000); 
 
 </script>
 </body>
