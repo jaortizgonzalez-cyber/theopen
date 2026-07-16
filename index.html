@@ -83,6 +83,19 @@
             70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
         }
+
+        .cut-line-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.5px;
+        }
         
         .prizes {
             display: flex;
@@ -316,6 +329,9 @@
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
+        <!-- PÍLDORA DE PROYECCIÓN DE CORTE -->
+        <div class="cut-line-badge" id="cutProjected" style="display: none;">✂️ Proyección del Corte: Calculando...</div>
+        
         <div class="prizes">
             <div>Bolsa de la Polla: <span id="totalPool">$0</span></div>
             <div>1er Puesto (70%): <span id="firstPrize">$0</span></div>
@@ -323,7 +339,7 @@
         </div>
     </div>
 
-    <!-- HORA DE ACTUALIZACIÓN LIMPIA (SIN ESTADOS) -->
+    <!-- HORA DE ACTUALIZACIÓN LIMPIA -->
     <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
 
     <div id="standingsContainer">
@@ -520,6 +536,7 @@
 
             let tourneyStateCode = event.status.type.state;       
 
+            // === LECTURA DEL ESTADO Y NÚMERO DE LA RONDA ===
             let currentRound = event.competitions[0].status.period || 1;
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
@@ -534,6 +551,7 @@
             
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
+            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO CON RONDA DINÁMICA ===
             let semaforoClase = "verde";
             let textoSemaforo = "";
 
@@ -552,6 +570,22 @@
             }
 
             document.getElementById("tourneyStatus").innerHTML = `<span class="semaforo ${semaforoClase}"></span> ${textoSemaforo}`;
+
+            // === LECTURA DE LA LÍNEA DE CORTE OFICIAL DE ESPN ===
+            let etiquetaCorte = document.getElementById("cutProjected");
+            if (tourneyStateCode === "pre" || currentRound > 2) {
+                etiquetaCorte.style.display = "none";
+            } else {
+                etiquetaCorte.style.display = "inline-block";
+                let corteTexto = "N/A";
+                
+                if (event.tournament && event.tournament.cutScore !== undefined) {
+                    let scoreCorteNum = event.tournament.cutScore;
+                    corteTexto = scoreCorteNum === 0 ? "E" : (scoreCorteNum > 0 ? "+" + scoreCorteNum : scoreCorteNum.toString());
+                }
+                
+                etiquetaCorte.innerText = "✂️ Proyección del Corte: " + corteTexto;
+            }
 
             competidoresData.forEach(comp => {
                 let nombre = comp.athlete.displayName;
@@ -810,7 +844,6 @@
             }
 
             const now = new Date();
-            // SOLO MOSTRAMOS LA HORA, NINGÚN MENSAJE DE ESTADO AQUÍ
             document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString('es-CO')}`;
 
             if (delay !== null) {
