@@ -314,7 +314,6 @@
     <div class="header">
         <h1>🏆 Polla The Open Championship 2026</h1>
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
-        <!-- AQUÍ SE INSERTARÁ EL SEMÁFORO JUNTO AL TEXTO -->
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
         <div class="prizes">
@@ -324,7 +323,7 @@
         </div>
     </div>
 
-    <!-- AQUÍ APARECERÁ EL MODO DE REPOSO O EN VIVO -->
+    <!-- HORA DE ACTUALIZACIÓN LIMPIA (SIN ESTADOS) -->
     <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
 
     <div id="standingsContainer">
@@ -519,10 +518,8 @@
                 document.getElementById("courseInfo").innerText = `⛳ ${c.name} • Par ${c.shotsToPar} • ${c.totalYards} Yds`;
             }
 
-            let tourneyStateDesc = event.status.type.description; 
             let tourneyStateCode = event.status.type.state;       
 
-            // === LECTURA DEL ESTADO Y NÚMERO DE LA RONDA ===
             let currentRound = event.competitions[0].status.period || 1;
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
@@ -537,7 +534,6 @@
             
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
-            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO CON RONDA DINÁMICA ===
             let semaforoClase = "verde";
             let textoSemaforo = "";
 
@@ -803,25 +799,19 @@
                 container.appendChild(div);
             });
 
-            let delay = 180000; // 3 minutos por defecto
-            let mensajeEstado = "";
+            let delay = 180000;
 
             if (tourneyStateCode === "post") {
                 delay = null; 
-                mensajeEstado = "🛑 Torneo Finalizado. Consultas detenidas.";
             } else if (tourneyStateCode === "pre") {
-                delay = 1800000; // 30 minutos
-                mensajeEstado = "💤 Torneo sin iniciar. Reposo (30 min).";
+                delay = 1800000; 
             } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
-                delay = 1800000; // 30 minutos
-                mensajeEstado = "🌙 Ronda finalizada por hoy. Reposo (30 min).";
-            } else {
-                delay = 180000; // 3 minutos
-                mensajeEstado = "⚡ EN VIVO (3 min).";
+                delay = 1800000; 
             }
 
             const now = new Date();
-            document.getElementById("lastUpdate").innerText = `Actualizado: ${now.toLocaleTimeString('es-CO')} | ${mensajeEstado}`;
+            // SOLO MOSTRAMOS LA HORA, NINGÚN MENSAJE DE ESTADO AQUÍ
+            document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString('es-CO')}`;
 
             if (delay !== null) {
                 setTimeout(actualizarPolla, delay);
@@ -829,7 +819,7 @@
 
         } catch (error) {
             console.error("Error consultando la API:", error);
-            document.getElementById("lastUpdate").innerText = "Error actualizando. Reintentando en 3 min...";
+            document.getElementById("lastUpdate").innerText = "Error actualizando. Reintentando...";
             setTimeout(actualizarPolla, 180000);
         }
     }
