@@ -355,7 +355,6 @@
     const nombresElegidos = new Set();
     participantes.forEach(p => p.picks.forEach(pick => nombresElegidos.add(normalizarNombre(pick))));
 
-    // Memoria para detectar Eagles, almacenando SCORE y HOYO (THRU)
     let historialJugadores = {};
 
     // ==========================================
@@ -518,18 +517,14 @@
                 let isLive = false;
                 let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
                 
-                // Extraer el número de hoyo actual para la lógica anti-errores
                 let currentThruNum = comp.status.thru || 0;
 
-                // === LÓGICA ESTRICTA DE ALERTA WOW ===
                 if (historialJugadores[normNombre] && tourneyStateCode !== "pre" && !noHaDebutado) {
                     let prevData = historialJugadores[normNombre];
                     let diffScore = scoreNum - prevData.score;
                     let diffThru = currentThruNum - prevData.thru;
 
-                    // Si el score bajó 2 o más golpes
                     if (diffScore <= -2) {
-                        // Anti-throttling: Solo es Eagle si avanzó 0 o 1 hoyo desde la última validación
                         if (diffThru >= 0 && diffThru <= 1) { 
                             if (nombresElegidos.has(normNombre)) {
                                 let tipoWow = diffScore <= -3 ? "ALBATROS / HOYO EN 1" : "EAGLE";
@@ -617,7 +612,7 @@
                     let norm = normalizarNombre(jugador);
                     
                     let datosVisuales = mapaDatosVisuales[norm] || {
-                        nombreOriginal: jugador, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
+                        nombreOriginal: jugador, scoreVal: 0, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
                         thru: "No encontrado", isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
                         headshot: "https://a.espncdn.com/i/headshots/golf/players/full/default.png", 
                         rondas: ["--","--","--","--"], flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
@@ -649,7 +644,8 @@
                             if (p.gananciaCalculada > 0 && p.gananciaCalculada === maxGanancia) {
                                 p.isMVP = true;
                             }
-                            if (p.gananciaCalculada === minGanancia && minGanancia < maxGanancia) {
+                            // CORRECCIÓN SACO DE SAL: Solo si es menor al MVP y además va SOBRE PAR (scoreVal > 0)
+                            if (p.gananciaCalculada === minGanancia && minGanancia < maxGanancia && p.scoreVal > 0) {
                                 p.isAnchor = true;
                             }
                         });
