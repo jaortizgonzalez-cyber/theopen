@@ -1,1201 +1,2402 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Polla - The 154TH Open Championship</title>
+
     <style>
+
         :root {
+
             --primary-color: #002b5c;
+
             --secondary-color: #001a38;
+
             --accent-color: #e5b122;
+
             --bg-color: #f0f2f5;
+
             --card-bg: #ffffff;
+
             --text-dark: #333333;
+
             --text-light: #777777;
+
         }
+
         body {
+
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
             background-color: var(--bg-color);
+
             color: var(--text-dark);
+
             margin: 0;
+
             padding: 20px;
+
         }
+
         .container {
+
             max-width: 1200px;
+
             margin: 0 auto;
+
         }
+
         .header {
+
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+
             color: white;
+
             padding: 30px;
+
             border-radius: 12px;
+
             box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+
             text-align: center;
+
             margin-bottom: 20px;
+
             position: relative;
+
         }
+
         .header h1 { margin: 0 0 5px 0; font-size: 2.5em; }
+
         
+
         .course-info {
+
             font-size: 0.9em;
+
             color: #b0c4de;
+
             margin-bottom: 15px;
+
             font-weight: 500;
+
             letter-spacing: 0.5px;
+
         }
+
+
 
         .tournament-status { 
+
             color: var(--accent-color); 
+
             font-weight: bold; 
+
             font-size: 1.1em; 
+
             letter-spacing: 1px; 
+
             text-transform: uppercase;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             gap: 8px;
+
         }
+
+
 
         /* SEMÁFORO DE ESTADO */
+
         .semaforo {
+
             display: inline-block;
+
             width: 15px;
+
             height: 15px;
+
             border-radius: 50%;
+
             border: 2px solid rgba(255,255,255,0.8);
+
         }
+
         .semaforo.verde {
+
             background-color: #34C759;
+
             box-shadow: 0 0 12px #34C759, 0 0 20px rgba(52,199,89,0.6);
+
             animation: pulse-semaforo-verde 2s infinite;
+
         }
+
         .semaforo.rojo {
+
             background-color: #FF3B30;
+
             box-shadow: 0 0 10px rgba(255,59,48,0.8);
+
         }
+
         .semaforo.amarillo {
+
             background-color: #FFCC00;
+
             box-shadow: 0 0 10px rgba(255,204,0,0.8);
+
         }
+
+
 
         @keyframes pulse-semaforo-verde {
+
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
+
             70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+
         }
+
+
 
         .cut-line-badge {
+
             display: inline-block;
+
             background: rgba(255, 255, 255, 0.15);
+
             color: #fff;
+
             padding: 6px 16px;
+
             border-radius: 20px;
+
             font-size: 0.9em;
+
             font-weight: bold;
+
             margin-top: 12px;
+
             border: 1px solid rgba(255, 255, 255, 0.3);
+
             letter-spacing: 0.5px;
+
         }
+
         
+
         .prizes {
+
             display: flex;
+
             justify-content: center;
+
             gap: 30px;
+
             margin-top: 20px;
+
             font-size: 1.2em;
+
             background: rgba(255,255,255,0.1);
+
             padding: 15px;
+
             border-radius: 8px;
+
         }
+
         .prizes span { color: var(--accent-color); font-weight: bold; }
 
+
+
         .btn-test-tv {
+
             position: absolute;
+
             top: 20px;
+
             right: 20px;
+
             background: var(--accent-color);
+
             color: #000;
+
             border: none;
+
             padding: 8px 12px;
+
             border-radius: 5px;
+
             font-weight: bold;
+
             cursor: pointer;
+
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+
             transition: all 0.2s;
+
         }
+
         .btn-test-tv:hover {
+
             transform: translateY(-2px);
+
             background: #f5c742;
+
         }
+
+
 
         .api-status {
+
             text-align: right;
+
             font-size: 0.9em;
+
             color: var(--text-light);
+
             margin-bottom: 20px;
+
             font-weight: bold;
+
         }
+
+
 
         .participant-card {
+
             background: var(--card-bg);
+
             border-radius: 12px;
+
             padding: 20px;
+
             margin-bottom: 20px;
+
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+
             border-left: 6px solid #ccc;
+
             transition: transform 0.2s ease, box-shadow 0.3s ease;
+
         }
+
         .participant-card:hover { transform: translateY(-3px); }
+
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
+
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
 
+
+
         @keyframes golden-glow {
+
             0% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
+
             50% { box-shadow: 0 0 20px rgba(229, 177, 34, 0.6); }
+
             100% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
+
         }
+
         .on-the-hunt {
+
             border: 2px solid var(--accent-color);
+
             animation: golden-glow 2.5s infinite;
+
         }
+
+
 
         .card-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             border-bottom: 2px solid #eee;
+
             padding-bottom: 15px;
+
             margin-bottom: 15px;
+
             cursor: pointer; 
+
             user-select: none; 
+
         }
+
         
+
         .participant-total-wrapper { display: flex; align-items: center; gap: 15px; }
 
+
+
         .toggle-btn {
+
             font-size: 1.8em;
+
             font-weight: 900;
+
             color: var(--accent-color);
+
             background: var(--primary-color);
+
             border-radius: 50%;
+
             width: 35px;
+
             height: 35px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             animation: titilar-boton 2s infinite ease-in-out;
+
         }
 
+
+
         @keyframes titilar-boton {
+
             0% { opacity: 1; transform: scale(1); }
+
             50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 10px rgba(229, 177, 34, 0.5); }
+
             100% { opacity: 1; transform: scale(1); }
+
         }
+
+
 
         .hidden-grid { display: none !important; }
 
+
+
         .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
+
         .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
+
         .participant-total { font-size: 1.8em; font-weight: 900; color: #2e7d32; }
 
+
+
         .golfers-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
             gap: 15px;
+
         }
+
         .golfer-item {
+
             background: #f8f9fa;
+
             border-radius: 8px;
+
             padding: 12px;
+
             display: flex;
+
             flex-direction: column;
+
             border: 1px solid #e0e0e0;
+
             position: relative;
+
             cursor: pointer; 
+
             transition: background 0.2s;
+
         }
+
         .golfer-item:active { background: #e0e0e0; }
+
         
+
         .golfer-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;}
+
         
+
         .headshot-container { position: relative; width: 40px; height: 40px; }
+
         .headshot-img {
+
             width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+
             background-color: #e0e0e0; border: 1px solid #ccc;
+
         }
+
         .flag-small {
+
             position: absolute; bottom: -2px; right: -5px; width: 18px;
+
             border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+
         }
+
+
 
         .golfer-name-wrapper { display: flex; flex-direction: column; overflow: hidden; }
+
         .golfer-name { font-weight: 700; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-color);}
+
         .special-badge { font-size: 0.9em; margin-left: 3px; }
 
+
+
         .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; margin-top: 5px; }
+
         
+
         .pos-wrapper { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+
         .golfer-pos { color: var(--text-dark); font-weight: 900; font-size: 1.1em;}
+
         .mov-up { color: #2e7d32; font-size: 0.75em; font-weight: bold;}
+
         .mov-down { color: #d32f2f; font-size: 0.75em; font-weight: bold;}
+
         .mov-flat { color: #9e9e9e; font-size: 0.75em; font-weight: bold;}
 
+
+
         /* MEDALLAS DE DRAMA DE CORTE */
+
         .cut-badge {
+
             font-size: 0.7em;
+
             font-weight: bold;
+
             padding: 2px 6px;
+
             border-radius: 4px;
+
             display: inline-block;
+
             text-transform: uppercase;
+
             letter-spacing: 0.5px;
+
             margin-left: 2px;
+
         }
+
         .cut-badge.line {
+
             background-color: #ff9800;
+
             color: white;
+
             animation: pulse-orange 1.5s infinite;
+
         }
+
         .cut-badge.danger {
+
             background-color: #f44336;
+
             color: white;
+
         }
+
         .cut-badge.dead {
+
             background-color: #9e9e9e;
+
             color: white;
+
         }
+
+
 
         @keyframes pulse-orange {
+
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+
             50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(255, 152, 0, 0); }
+
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+
         }
 
+
+
         .score-box { background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;}
+
         .score-box.over-par { background: #d32f2f; }
+
         .score-box.even-par { background: #757575; }
+
         .score-box.cut { background: #000000; }
+
         
+
         .golfer-thru { 
+
             font-size: 0.85em; color: var(--text-light); margin-top: 8px; 
+
             display: flex; justify-content: flex-end; align-items: center;
+
         }
+
         
+
         .live-dot {
+
             height: 10px; width: 10px; background-color: #ff3b30; border-radius: 50%;
+
             display: inline-block; margin-right: 6px; animation: pulse-red 1.5s infinite;
+
         }
+
         
+
         @keyframes pulse-red {
+
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+
         }
+
+
 
         .golfer-earnings { margin-top: 8px; font-weight: 900; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px; font-size: 1.1em;}
 
+
+
         /* MODAL JUGADOR */
+
         .modal-overlay {
+
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
             background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;
+
             opacity: 0; transition: opacity 0.3s ease;
+
         }
+
         .modal-overlay.show { display: flex; opacity: 1; }
+
         
+
         .modal-content {
+
             background: white; border-radius: 16px; padding: 25px; width: 90%; max-width: 360px;
+
             transform: scale(0.8) translateY(50px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
             box-shadow: 0 15px 30px rgba(0,0,0,0.3); position: relative;
+
         }
+
         .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
 
+
+
         .close-modal {
+
             position: absolute; top: 10px; right: 15px; font-size: 1.8em; 
+
             cursor: pointer; color: #999; font-weight: bold;
+
         }
+
         
+
         .modal-header-info { display: flex; align-items: center; gap: 15px; margin-bottom: 20px;}
+
         .modal-header-info .img-wrapper { position: relative; width: 70px; height: 70px; }
+
         .modal-header-info img.main-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
+
         .modal-header-info img.flag-pic { position: absolute; bottom: 0; right: -5px; width: 25px; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.4);}
+
         
+
         .modal-name-pos h2 { margin: 0; font-size: 1.4em; color: var(--primary-color); line-height: 1.1; }
+
         .modal-name-pos .m-pos { margin-top: 5px; color: #555; font-size: 1.1em; font-weight: bold;}
+
         .modal-name-pos .m-score { color: var(--primary-color); font-weight: 900;}
 
+
+
         .round-scores { display: flex; justify-content: space-between; gap: 8px;}
+
         .round { text-align: center; background: #f4f6f8; padding: 12px 5px; border-radius: 10px; flex: 1; border: 1px solid #eaeaea;}
+
         .round span { display: block; font-size: 0.85em; color: #888; margin-bottom: 5px; font-weight: 600;}
+
         .round strong { font-size: 1.3em; color: var(--primary-color); }
 
+
+
         /* ALERTA WOW (EAGLE / HOLE IN ONE) */
+
         .wow-overlay {
+
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
             background: rgba(0,0,0,0.85); z-index: 10000;
+
             display: flex; align-items: center; justify-content: center;
+
             opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-        }
-        .wow-overlay.active { opacity: 1; pointer-events: all; }
-        .wow-box {
-            background: linear-gradient(135deg, #FFD700, #F5A623);
-            padding: 40px; border-radius: 20px; text-align: center;
-            transform: scale(0.5); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); border: 4px solid #fff;
-            width: 80%; max-width: 400px;
-        }
-        .wow-overlay.active .wow-box { transform: scale(1); }
-        .wow-icon { font-size: 5em; margin-bottom: 10px; animation: bounce-wow 1s infinite; }
-        .wow-title { font-size: 2.8em; font-weight: 900; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 0; text-transform: uppercase; line-height: 1.1;}
-        .wow-name { font-size: 1.8em; font-weight: 800; color: #001a38; margin-top: 15px; }
-        .wow-desc { font-size: 1.2em; color: #fff; margin-top: 10px; font-weight: bold; }
-        
-        @keyframes bounce-wow { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-20px); } 
+
         }
 
-        /* ------------------------------------- */
-        /* --- ESTILOS TABLERO DE TELEVISIÓN --- */
-        /* ------------------------------------- */
-        .tv-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+        .wow-overlay.active { opacity: 1; pointer-events: all; }
+
+        .wow-box {
+
+            background: linear-gradient(135deg, #FFD700, #F5A623);
+
+            padding: 40px; border-radius: 20px; text-align: center;
+
+            transform: scale(0.5); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); border: 4px solid #fff;
+
+            width: 80%; max-width: 400px;
+
         }
-        .tv-overlay.active { opacity: 1; pointer-events: all; }
+
+        .wow-overlay.active .wow-box { transform: scale(1); }
+
+        .wow-icon { font-size: 5em; margin-bottom: 10px; animation: bounce-wow 1s infinite; }
+
+        .wow-title { font-size: 2.8em; font-weight: 900; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 0; text-transform: uppercase; line-height: 1.1;}
+
+        .wow-name { font-size: 1.8em; font-weight: 800; color: #001a38; margin-top: 15px; }
+
+        .wow-desc { font-size: 1.2em; color: #fff; margin-top: 10px; font-weight: bold; }
+
         
-        .tv-board {
-            background: #141a29; 
-            width: 95%; max-width: 650px; border-radius: 8px; overflow: hidden;
-            transform: scale(0.85) translateY(50px);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+        @keyframes bounce-wow { 
+
+            0%, 100% { transform: translateY(0); } 
+
+            50% { transform: translateY(-20px); } 
+
         }
+
+
+
+        /* ------------------------------------- */
+
+        /* --- ESTILOS TABLERO DE TELEVISIÓN --- */
+
+        /* ------------------------------------- */
+
+        .tv-overlay {
+
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500;
+
+            display: flex; align-items: center; justify-content: center;
+
+            opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+
+        }
+
+        .tv-overlay.active { opacity: 1; pointer-events: all; }
+
+        
+
+        .tv-board {
+
+            background: #141a29; 
+
+            width: 95%; max-width: 650px; border-radius: 8px; overflow: hidden;
+
+            transform: scale(0.85) translateY(50px);
+
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+        }
+
         .tv-overlay.active .tv-board { transform: scale(1) translateY(0); }
 
+
+
         .tv-header-box {
+
             background: linear-gradient(90deg, #0b1536, #1b3a8a, #0b1536);
+
             padding: 20px; display: flex; align-items: center; justify-content: center;
+
             border-bottom: 3px solid #e5b122; position: relative;
+
         }
+
         .tv-header-box h2 {
+
             margin: 0; color: #fff; font-size: 1.8em; letter-spacing: 2px;
+
             font-family: 'Times New Roman', Times, serif; font-weight: normal;
+
         }
+
         .tv-close-btn {
+
             position: absolute; right: 15px; top: 15px; color: #fff; font-size: 1.5em;
+
             cursor: pointer; opacity: 0.6; user-select: none;
+
         }
+
         .tv-close-btn:hover { opacity: 1; }
 
+
+
         .tv-table-container { width: 100%; position: relative; min-height: 480px; }
+
         
+
         /* Efecto de desvanecimiento entre páginas */
+
         #tvTableBody {
+
             transition: opacity 0.4s ease;
+
         }
+
         #tvTableBody.fade-out {
+
             opacity: 0;
+
         }
+
+
 
         .tv-table { 
+
             width: 100%; 
+
             border-collapse: collapse; 
+
             border-spacing: 0;
+
             color: #fff; 
+
             font-size: 0.95em; 
+
             table-layout: fixed; 
-        }
-        
-        .tv-table tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
-        }
-        .tv-table tr:last-child { border-bottom: none; }
-        
-        .tv-table th {
-            text-align: center; 
-            padding: 12px 10px; 
-            color: #8fa0c4;
-            text-transform: uppercase; 
-            font-size: 0.75em; 
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.2); 
-            font-weight: 600;
-        }
-        .tv-table th.col-name { 
-            text-align: left; 
-            width: 45%; 
-        }
-        
-        .tv-table td { 
-            padding: 12px 10px; 
-            text-align: center; 
-            vertical-align: middle; 
-        }
-        
-        .tv-cell-pos { font-weight: bold; color: #fff; width: 10%; }
-        
-        .tv-cell-name { text-align: left; }
-        
-        .tv-name-wrapper {
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
+
         }
 
-        .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-        .tv-first-name { font-weight: normal; color: #d1d8e8; }
-        .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
         
-        .tv-cell-today { font-weight: bold; width: 15%; }
-        
-        .tv-cell-total { width: 15%; }
-        .tv-total-box {
-            display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center;
+
+        .tv-table tr {
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+
         }
+
+        .tv-table tr:last-child { border-bottom: none; }
+
+        
+
+        .tv-table th {
+
+            text-align: center; 
+
+            padding: 12px 10px; 
+
+            color: #8fa0c4;
+
+            text-transform: uppercase; 
+
+            font-size: 0.75em; 
+
+            letter-spacing: 1px;
+
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+
+            font-weight: 600;
+
+        }
+
+        .tv-table th.col-name { 
+
+            text-align: left; 
+
+            width: 45%; 
+
+        }
+
+        
+
+        .tv-table td { 
+
+            padding: 12px 10px; 
+
+            text-align: center; 
+
+            vertical-align: middle; 
+
+        }
+
+        
+
+        .tv-cell-pos { font-weight: bold; color: #fff; width: 10%; }
+
+        
+
+        .tv-cell-name { text-align: left; }
+
+        
+
+        .tv-name-wrapper {
+
+            display: flex; 
+
+            align-items: center; 
+
+            gap: 10px; 
+
+            white-space: nowrap; 
+
+            overflow: hidden; 
+
+            text-overflow: ellipsis;
+
+        }
+
+
+
+        .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+        .tv-first-name { font-weight: normal; color: #d1d8e8; }
+
+        .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
+
+        
+
+        .tv-cell-today { font-weight: bold; width: 15%; }
+
+        
+
+        .tv-cell-total { width: 15%; }
+
+        .tv-total-box {
+
+            display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center;
+
+        }
+
         .tv-total-box.under { background-color: #d32f2f; color: #fff; } 
+
         .tv-total-box.even-over { background-color: transparent; color: #fff; }
+
+
 
         .tv-cell-thru { width: 15%; color: #aaa; font-weight: bold; font-size: 0.9em; }
 
+
+
         /* AJUSTES PARA PANTALLAS MÓVILES */
+
         @media (max-width: 768px) {
+
             body { padding: 10px; }
+
             .header { padding: 20px 15px; }
+
             .header h1 { font-size: 1.8em; }
+
             
+
             /* Solución al botón de Leaderboard que rompía la cabecera en celulares */
+
             .btn-test-tv {
+
                 position: relative;
+
                 top: 0;
+
                 right: 0;
+
                 display: block;
+
                 width: 100%;
+
                 margin-top: 20px;
+
                 padding: 12px;
+
                 font-size: 1.1em;
+
                 box-sizing: border-box;
+
             }
 
+
+
             .tournament-status { font-size: 0.85em; }
+
             .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
+
             .participant-card { padding: 15px; }
+
             .card-header { flex-wrap: nowrap; gap: 8px; } 
+
             .participant-name { font-size: 1.3em; }
+
             .participant-total { font-size: 1.4em; }
+
             .golfers-grid { grid-template-columns: 1fr; }
+
             .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
+
             .wow-title { font-size: 2.2em; }
+
             .wow-name { font-size: 1.5em; }
+
             
+
             /* Ajustes Tablero TV Móvil */
+
             .tv-header-box h2 { font-size: 1.4em; }
+
             .tv-table { font-size: 0.85em; }
+
             .tv-flag { width: 18px; }
+
             .tv-table th, .tv-table td { padding: 10px 4px; }
+
             .tv-table-container { min-height: 400px; }
+
         }
+
     </style>
+
 </head>
+
 <body>
 
+
+
 <div class="container">
+
     <div class="header">
+
         <h1>🏆 Polla The 154TH Open Championship 2026</h1>
+
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
+
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
+
         
+
         <!-- PÍLDORA DE PROYECCIÓN DE CORTE -->
+
         <div class="cut-line-badge" id="cutProjected" style="display: none;">✂️ Proyección del Corte: Calculando...</div>
+
         
+
         <div class="prizes">
+
             <div>Bolsa de la Polla: <span id="totalPool">$0</span></div>
+
             <div>1er Puesto (70%): <span id="firstPrize">$0</span></div>
+
             <div>2do Puesto (30%): <span id="secondPrize">$0</span></div>
+
         </div>
+
+
 
         <button class="btn-test-tv" onclick="mostrarLeaderboardTV()">📺 Leaderboard</button>
+
     </div>
+
+
 
     <!-- HORA DE ACTUALIZACIÓN LIMPIA -->
+
     <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
 
+
+
     <div id="standingsContainer">
+
         <!-- Tarjetas generadas por JS -->
+
     </div>
+
 </div>
+
+
 
 <!-- ESTRUCTURA DEL MODAL DE JUGADOR -->
+
 <div id="golferModal" class="modal-overlay" onclick="cerrarModal(event)">
+
     <div class="modal-content" onclick="event.stopPropagation()">
+
         <span class="close-modal" onclick="cerrarModal(null, true)">&times;</span>
+
         <div class="modal-header-info">
+
             <div class="img-wrapper">
+
                 <img id="m-foto" class="main-pic" src="" alt="">
+
                 <img id="m-flag" class="flag-pic" src="" alt="">
+
             </div>
+
             <div class="modal-name-pos">
+
                 <h2 id="m-nombre">Nombre</h2>
+
                 <div class="m-pos">Pos: <span id="m-pos"></span> | <span class="m-score" id="m-score"></span></div>
+
             </div>
+
         </div>
+
         <div class="round-scores">
+
             <div class="round"><span>R1</span><strong id="m-r1">--</strong></div>
+
             <div class="round"><span>R2</span><strong id="m-r2">--</strong></div>
+
             <div class="round"><span>R3</span><strong id="m-r3">--</strong></div>
+
             <div class="round"><span>R4</span><strong id="m-r4">--</strong></div>
+
         </div>
+
     </div>
+
 </div>
+
+
 
 <!-- ESTRUCTURA DE LA ALERTA WOW (EAGLE / HOLE IN ONE) -->
+
 <div id="wowAlert" class="wow-overlay">
+
     <div class="wow-box">
+
         <div class="wow-icon" id="wowIcon">🦅</div>
+
         <div class="wow-title" id="wowTitle">¡EAGLE!</div>
+
         <div class="wow-name" id="wowName">Jugador</div>
+
         <div class="wow-desc">¡Aportando magia a la polla!</div>
+
     </div>
+
 </div>
+
+
 
 <!-- ESTRUCTURA DEL TABLERO DE TELEVISIÓN CON PAGINACIÓN -->
+
 <div id="tvLeaderboardOverlay" class="tv-overlay" onclick="cerrarTV(event)">
+
     <div class="tv-board" onclick="event.stopPropagation()">
+
         <div class="tv-header-box">
+
             <h2>THE 154TH OPEN</h2>
+
             <div class="tv-close-btn" onclick="cerrarTV(null, true)">&times;</div>
+
         </div>
+
         <div class="tv-table-container">
+
             <table class="tv-table">
+
                 <thead>
+
                     <tr>
+
                         <th class="tv-cell-pos">Pos</th>
+
                         <th class="col-name">Round <span id="tvRoundNum">--</span></th>
+
                         <th class="tv-cell-today">Today</th>
+
                         <th class="tv-cell-total">Total</th>
+
                         <th class="tv-cell-thru">Thru</th>
+
                     </tr>
+
                 </thead>
+
                 <tbody id="tvTableBody">
+
                     <!-- Filas inyectadas y paginadas por JS -->
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </div>
 
+
+
 <script>
+
     // ==========================================
+
     // 1. CONFIGURACIÓN DE LA POLLA Y VARIABLES
+
     // ==========================================
+
     const CUOTA_INSCRIPCION = 50000; 
+
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
+
+
     const participantes = [
-        { nombre: "Roberto García", picks: ["Matt Fitzpatrick", "Si Woo Kim", "Rory McIlroy", "Scottie Scheffler", "Aaron Rai"] },
-        { nombre: "Jesus Rojas", picks: ["Scottie Scheffler", "Rory McIlroy", "Tommy Fleetwood", "Chris Gotterup", "Justin Rose"] },
+
+        { nombre: "Ronnie Sanchez", picks: ["Scottie Scheffler", "Rory McIlroy", "Xander Schauffele", "Matt Fitzpatrick", "Ludvig Aberg"] },
+
+        { nombre: "Juan Ardila", picks: ["Shane Lowry", "Rory McIlroy", "Viktor Hovland", "Tommy Fleetwood", "Scottie Scheffler"] },
+
         { nombre: "Felipe Bernal", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Tommy Fleetwood", "Collin Morikawa"] },
-        { nombre: "Jaime Gracia", picks: ["Scottie Scheffler", "Rory McIlroy", "Patrick Reed", "Wyndham Clark", "Tom Kim"] },
-        { nombre: "Hugo Castañeda", picks: ["Rory McIlroy", "Scottie Scheffler", "Viktor Hovland", "Xander Schauffele", "Ludvig Aberg"] }
+
+        { nombre: "Andrés Ortiz", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Xander Schauffele", "Tommy Fleetwood"] },
+
+        { nombre: "Fernando Fierro", picks: ["Robert MacIntyre", "Akshay Bhatia", "Min Woo Lee", "Shane Lowry", "Rory McIlroy"] },
+
+        { nombre: "Paul Franco", picks: ["Matt Fitzpatrick", "Rory McIlroy", "Patrick Cantlay", "Maverick McNealy", "Scottie Scheffler"] }
+
     ];
+
+
 
     const BOLSA_TOTAL = CUOTA_INSCRIPCION * participantes.length;
 
+
+
     const premiosOficiales = [
+
         3200000, 1842000, 1181000, 917000, 738000, 639700, 549700, 463250, 406200, 367000,
+
         334200, 296000, 278500, 260700, 241900, 222700, 212000, 202000, 193600, 184500,
+
         175900, 167100, 158100, 149300, 144250, 138000, 133000, 128400, 122800, 116500,
+
         112700, 106900, 103100, 100200, 96700, 92900, 88500, 84100, 81000, 78400,
+
         75200, 71500, 68300, 64400, 60700, 57600, 55300, 53100, 50700, 49400,
+
         48350, 47500, 46800, 46100, 45300, 44700, 44250, 43950, 43625, 43325,
+
         43100, 42900, 42700, 42500, 42150, 41825, 41500, 41200, 40900, 40700
+
     ];
 
+
+
     const nombresElegidos = new Set();
+
     participantes.forEach(p => p.picks.forEach(pick => nombresElegidos.add(normalizarNombre(pick))));
 
+
+
     let historialJugadores = {};
+
     
+
     // Variables Paginación TV
+
     let datosLideratoGlobalTV = []; 
+
     let rondaActualGlobal = 1;
+
     let tvScrollIntervalId = null;
+
     let tvCurrentPage = 0;
+
     const TV_PAGE_SIZE = 10;
 
+
+
     // ==========================================
+
     // 2. UTILIDADES Y MODALES
+
     // ==========================================
+
     const participantesColapsados = new Set();
 
+
+
     window.toggleTarjeta = function(nombreParticipante, elementoCabecera) {
+
         const cuadricula = elementoCabecera.nextElementSibling;
+
         const botonToggle = elementoCabecera.querySelector('.toggle-btn');
+
         if (participantesColapsados.has(nombreParticipante)) {
+
             participantesColapsados.delete(nombreParticipante);
+
             cuadricula.classList.remove('hidden-grid');
+
             botonToggle.innerText = "-";
+
         } else {
+
             participantesColapsados.add(nombreParticipante);
+
             cuadricula.classList.add('hidden-grid');
+
             botonToggle.innerText = "+";
+
         }
+
     };
+
+
 
     window.abrirModal = function(nombre, foto, flag, r1, r2, r3, r4, pos, score) {
+
         document.getElementById("m-nombre").innerText = nombre;
+
         document.getElementById("m-foto").src = foto;
+
         document.getElementById("m-flag").src = flag;
+
         document.getElementById("m-pos").innerText = pos;
+
         document.getElementById("m-score").innerText = score;
+
         document.getElementById("m-r1").innerText = r1;
+
         document.getElementById("m-r2").innerText = r2;
+
         document.getElementById("m-r3").innerText = r3;
+
         document.getElementById("m-r4").innerText = r4;
+
         let modal = document.getElementById("golferModal");
+
         modal.classList.add("show");
+
     };
+
+
 
     window.cerrarModal = function(e, force = false) {
+
         if (force || e.target.id === 'golferModal') {
+
             document.getElementById("golferModal").classList.remove("show");
+
         }
+
     };
+
+
 
     window.mostrarAlertaWow = function(nombre, tipo) {
+
         document.getElementById('wowName').innerText = nombre;
+
         document.getElementById('wowTitle').innerText = "¡" + tipo + "!";
+
         document.getElementById('wowIcon').innerText = tipo.includes("ALBATROS") ? "⛳🏌️‍♂️" : "🦅";
+
         
+
         let overlay = document.getElementById('wowAlert');
+
         overlay.classList.add('active');
+
         setTimeout(() => { overlay.classList.remove('active'); }, 6000);
+
     };
+
+
 
     // --- Paginación de Tablero TV ---
+
     window.mostrarLeaderboardTV = function() {
+
         if (datosLideratoGlobalTV.length === 0) return;
 
+
+
         let overlay = document.getElementById('tvLeaderboardOverlay');
+
         overlay.classList.add('active');
 
+
+
         tvCurrentPage = 0;
+
         renderTVPage(tvCurrentPage);
 
+
+
         if (tvScrollIntervalId) clearInterval(tvScrollIntervalId);
+
         
+
         // Bucle de auto-scroll cada 10 segundos
+
         tvScrollIntervalId = setInterval(() => {
+
             let totalPages = Math.ceil(datosLideratoGlobalTV.length / TV_PAGE_SIZE);
+
             tvCurrentPage++;
+
             
+
             if (tvCurrentPage >= totalPages) {
+
                 cerrarTV(null, true);
+
             } else {
+
                 let tbody = document.getElementById("tvTableBody");
+
                 tbody.classList.add("fade-out");
+
                 
+
                 setTimeout(() => {
+
                     renderTVPage(tvCurrentPage);
+
                     tbody.classList.remove("fade-out");
+
                 }, 400); 
+
             }
+
         }, 10000); 
+
     };
 
+
+
     function renderTVPage(pageIndex) {
+
         document.getElementById("tvRoundNum").innerText = rondaActualGlobal;
+
         const tbody = document.getElementById("tvTableBody");
+
         tbody.innerHTML = "";
 
+
+
         let startIndex = pageIndex * TV_PAGE_SIZE;
+
         let pageData = datosLideratoGlobalTV.slice(startIndex, startIndex + TV_PAGE_SIZE);
 
+
+
         pageData.forEach(j => {
+
             let nameParts = j.nombre.split(" ");
+
             let lastName = nameParts.pop().toUpperCase();
+
             let firstName = nameParts.join(" ");
+
             let formattedName = `<span class="tv-first-name">${firstName}</span> <span class="tv-last-name">${lastName}</span>`;
+
+
 
             let totalClass = j.totalScore < 0 ? "under" : "even-over";
 
+
+
             let todayText = j.todayScore === "0" || j.todayScore === 0 ? "PAR" : j.todayScore;
+
             let totalText = j.totalScoreStr === "E" ? "PAR" : j.totalScoreStr;
 
+
+
             tbody.innerHTML += `
+
                 <tr>
+
                     <td class="tv-cell-pos">${j.pos}</td>
+
                     <td class="tv-cell-name">
+
                         <div class="tv-name-wrapper">
+
                             <img src="${j.flag}" class="tv-flag" onerror="this.style.display='none'">
+
                             ${formattedName}
+
                         </div>
+
                     </td>
+
                     <td class="tv-cell-today">${todayText}</td>
+
                     <td class="tv-cell-total">
+
                         <div class="tv-total-box ${totalClass}">${totalText}</div>
+
                     </td>
+
                     <td class="tv-cell-thru">${j.thru}</td>
+
                 </tr>
+
             `;
+
         });
+
     }
+
+
 
     window.cerrarTV = function(e, force = false) {
+
         if (force || (e && e.target.id === 'tvLeaderboardOverlay')) {
+
             document.getElementById('tvLeaderboardOverlay').classList.remove('active');
+
             if(tvScrollIntervalId) clearInterval(tvScrollIntervalId);
+
         }
+
     };
 
+
+
     function normalizarNombre(nombre) {
+
         return nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
     }
+
+
 
     function formatMoney(amount) {
+
         return "$" + amount.toLocaleString('es-CO', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+
     }
+
+
 
     function formatearHoraColombia(isoString) {
+
         if (!isoString) return "TBD";
+
         const date = new Date(isoString);
+
         return date.toLocaleTimeString('es-CO', {
+
             timeZone: 'America/Bogota',
+
             hour: 'numeric',
+
             minute: '2-digit',
+
             hour12: true
+
         });
+
     }
 
+
+
     // ==========================================
+
     // 3. LÓGICA DE CÁLCULO
+
     // ==========================================
+
     function calcularGananciasGolfistas(leaderboardArray) {
+
         leaderboardArray.sort((a, b) => a.scoreVal - b.scoreVal);
+
         let mapaGanancias = {};
+
         let posicionActual = 0; 
 
+
+
         while (posicionActual < leaderboardArray.length) {
+
             let scoreActual = leaderboardArray[posicionActual].scoreVal;
+
             let empatados = [];
 
+
+
             for (let i = posicionActual; i < leaderboardArray.length; i++) {
+
                 if (leaderboardArray[i].scoreVal === scoreActual) {
+
                     empatados.push(leaderboardArray[i].nombreOriginal);
+
                 } else { break; }
+
             }
+
+
 
             let numEmpatados = empatados.length;
+
             let sumaPremiosEmpate = 0;
+
             for (let i = 0; i < numEmpatados; i++) {
+
                 sumaPremiosEmpate += premiosOficiales[posicionActual + i] || 0; 
+
             }
+
+
 
             let gananciaPromedio = scoreActual === 999 ? 0 : sumaPremiosEmpate / numEmpatados;
+
             empatados.forEach(jugador => {
+
                 mapaGanancias[normalizarNombre(jugador)] = gananciaPromedio;
+
             });
+
             posicionActual += numEmpatados;
+
         }
+
         return mapaGanancias;
+
     }
 
+
+
     // ==========================================
+
     // 4. MOTOR PRINCIPAL Y FRECUENCIA DINÁMICA
+
     // ==========================================
+
     async function actualizarPolla() {
+
         try {
+
             const urlFresco = API_URL + "&t=" + new Date().getTime();
+
             const response = await fetch(urlFresco, { cache: "no-store" });
+
             const data = await response.json();
 
+
+
             let event = data.events.find(e => e.name.includes("Open")) || data.events[0]; 
+
             
+
             if (event.courses && event.courses.length > 0) {
+
                 let c = event.courses[0];
+
                 document.getElementById("courseInfo").innerText = `⛳ ${c.name} • Par ${c.shotsToPar} • ${c.totalYards} Yds`;
+
             }
+
+
 
             let tourneyStateCode = event.status.type.state;       
 
+
+
             let currentRound = event.competitions[0].status.period || 1;
+
             rondaActualGlobal = currentRound; 
+
             let compStatusName = event.competitions[0].status.type.name;
+
             let compState = event.competitions[0].status.type.state;
+
             let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
 
+
+
             const competidoresData = event.competitions[0].competitors;
+
             let golfistasExtraidos = [];
+
             let mapaDatosVisuales = {}; 
+
             
+
             let nuevoHistorial = {};
+
             let eventosWow = []; 
+
             let datosTempTV = []; 
+
             
+
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
+
+
             let semaforoClase = "verde";
+
             let textoSemaforo = "";
 
+
+
             if (tourneyStateCode === "post") {
+
                 semaforoClase = "rojo";
+
                 textoSemaforo = "Torneo Finalizado";
+
             } else if (tourneyStateCode === "pre") {
+
                 semaforoClase = "amarillo";
+
                 textoSemaforo = "El torneo aún no ha comenzado";
+
             } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+
                 semaforoClase = "rojo";
+
                 textoSemaforo = `Ronda ${currentRound} Finalizada`;
+
             } else {
+
                 semaforoClase = "verde";
+
                 textoSemaforo = `Ronda ${currentRound} en Juego`;
+
             }
+
+
 
             document.getElementById("tourneyStatus").innerHTML = `<span class="semaforo ${semaforoClase}"></span> ${textoSemaforo}`;
 
+
+
             let etiquetaCorte = document.getElementById("cutProjected");
+
             let oficialCutScore = undefined;
 
+
+
             if (tourneyStateCode === "pre" || currentRound > 2) {
+
                 etiquetaCorte.style.display = "none";
+
             } else {
+
                 etiquetaCorte.style.display = "inline-block";
+
                 let corteTexto = "N/A";
+
                 
+
                 if (event.tournament && event.tournament.cutScore !== undefined) {
+
                     oficialCutScore = event.tournament.cutScore;
+
                     corteTexto = oficialCutScore === 0 ? "E" : (oficialCutScore > 0 ? "+" + oficialCutScore : oficialCutScore.toString());
+
                 }
+
                 
+
                 etiquetaCorte.innerText = "✂️ Proyección del Corte: " + corteTexto;
+
             }
 
+
+
             // --- EXTRACCIÓN DE DATOS ---
+
             competidoresData.forEach((comp, index) => {
+
                 let nombre = comp.athlete.displayName;
+
                 let normNombre = normalizarNombre(nombre);
+
                 
+
                 let scoreStr = "E";
+
                 let scoreToParStat = comp.statistics ? comp.statistics.find(s => s.name === "scoreToPar") : null;
+
                 
+
                 if (scoreToParStat && scoreToParStat.displayValue && scoreToParStat.displayValue !== "-") {
+
                     scoreStr = scoreToParStat.displayValue;
+
                 } else if (comp.score && comp.score.displayValue && comp.score.displayValue !== "-") {
+
                     scoreStr = comp.score.displayValue;
+
                 }
+
+
 
                 let scoreNum = 0;
+
                 if (scoreStr === "E") scoreNum = 0;
+
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
+
                 else scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
 
+
+
                 let horaColombia = formatearHoraColombia(comp.status.teeTime);
+
                 let rawTeeTime = comp.status.teeTime || "9999-12-31T23:59Z"; 
+
                 
+
                 let thruInfo = "";
+
                 let isLive = false;
+
                 let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
+
                 
+
                 let currentThruNum = comp.status.thru || 0;
 
+
+
                 if (historialJugadores[normNombre] && tourneyStateCode !== "pre" && !noHaDebutado) {
+
                     let prevData = historialJugadores[normNombre];
+
                     let diffScore = scoreNum - prevData.score;
+
                     let diffThru = currentThruNum - prevData.thru;
 
+
+
                     if (diffScore <= -2) {
+
                         if (diffThru >= 0 && diffThru <= 1) { 
+
                             if (nombresElegidos.has(normNombre)) {
+
                                 let tipoWow = diffScore <= -3 ? "ALBATROS / HOYO EN 1" : "EAGLE";
+
                                 eventosWow.push({ nombre: nombre, tipo: tipoWow });
+
                             }
+
                         }
+
                     }
+
                 }
+
                 
+
                 nuevoHistorial[normNombre] = { score: scoreNum, thru: currentThruNum };
 
+
+
                 if (tourneyStateCode === "pre") {
+
                     thruInfo = "Tee: " + horaColombia + " COL"; 
+
                 } else {
+
                     if (scoreStr === "CUT") {
+
                         thruInfo = "Falló Corte";
+
                     } else if (scoreStr === "WD") {
+
                         thruInfo = "Retirado";
+
                     } else if (comp.status.type.completed || comp.status.type.state === "post") {
+
                         thruInfo = "Casa Club (F)";
+
                     } else if (comp.status.type.state === "in") {
+
                         isLive = true;
+
                         let thruVal = comp.status.displayThru || comp.status.thru;
+
                         thruInfo = "Thru " + thruVal; 
+
                     } else if (comp.status.type.state === "pre") {
+
                         thruInfo = "Tee: " + horaColombia + " COL";
+
                     } else {
+
                         thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + horaColombia + " COL";
+
                     }
+
                 }
+
+
 
                 let rounds = ["--", "--", "--", "--"];
+
                 let todayScoreLine = "-";
+
                 if (comp.linescores) {
+
                     comp.linescores.forEach(ls => {
+
                         if (ls.period && ls.period <= 4 && ls.value) {
+
                             rounds[ls.period - 1] = ls.displayValue || ls.value;
+
                             if(ls.period === currentRound) {
+
                                 todayScoreLine = ls.displayValue || ls.value;
+
                             }
+
                         }
+
                     });
+
                 }
+
+
 
                 let movement = comp.movement || 0;
+
                 let movHtml = "";
+
                 if (tourneyStateCode !== "pre") {
+
                     if (movement > 0) movHtml = `<span class="mov-up">▲${movement}</span>`;
+
                     else if (movement < 0) movHtml = `<span class="mov-down">▼${Math.abs(movement)}</span>`;
+
                     else movHtml = `<span class="mov-flat">-</span>`;
+
                 }
+
+
 
                 let cutStatusHtml = "";
-                // CAMBIO ESTRICTO: Se agregó la variable !rondaTerminadaOSuspendida para desaparecer el status.
-                if (currentRound <= 2 && !rondaTerminadaOSuspendida && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
+
+                if (currentRound <= 2 && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
+
                     let diffCorte = scoreNum - oficialCutScore;
+
                     
+
                     if (diffCorte === 0) {
+
                         cutStatusHtml = `<span class="cut-badge line" title="Justo en la línea del corte">Línea ✂️</span>`;
+
                     } else if (diffCorte === 1 || diffCorte === 2) {
+
                         cutStatusHtml = `<span class="cut-badge danger" title="A ${diffCorte} golpe(s) de salvarse">Sudando 💦</span>`;
+
                     } else if (diffCorte >= 3) {
+
                         cutStatusHtml = `<span class="cut-badge dead" title="Prácticamente eliminados">Empacando ✈️</span>`;
+
                     }
+
                 }
 
+
+
                 let headshot = comp.athlete.headshot ? comp.athlete.headshot.href : "https://a.espncdn.com/i/headshots/golf/players/full/default.png";
+
                 let flagHref = comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png";
 
+
+
                 let infoJugador = {
+
                     nombreOriginal: nombre,
+
                     scoreVal: scoreNum,
+
                     scoreStr: noHaDebutado ? "-" : scoreStr, 
+
                     posOriginal: comp.status.position ? comp.status.position.displayName : "-",
+
                     movHtml: movHtml,
+
                     thru: thruInfo,
+
                     isLive: isLive,
+
                     noHaDebutado: noHaDebutado,
+
                     teeTimeRaw: rawTeeTime,
+
                     headshot: headshot,
+
                     rondas: rounds,
+
                     flag: flagHref,
+
                     cutStatusHtml: cutStatusHtml
+
                 };
 
+
+
                 golfistasExtraidos.push(infoJugador);
+
                 mapaDatosVisuales[normNombre] = infoJugador;
 
+
+
                 let thruTextTV = thruInfo.replace("Thru ", "").replace("Casa Club (F)", "F").replace("Tee: ", "").split(" COL")[0].trim();
+
                 if(scoreStr === "CUT" || scoreStr === "WD") thruTextTV = scoreStr;
 
+
+
                 datosTempTV.push({
+
                     pos: comp.status.position ? comp.status.position.displayName : "-",
+
                     nombre: nombre,
+
                     flag: flagHref,
+
                     todayScore: todayScoreLine,
+
                     totalScore: scoreNum,
+
                     totalScoreStr: noHaDebutado ? "-" : scoreStr,
+
                     thru: thruTextTV
+
                 });
+
             });
 
+
+
             // === ORDENAMIENTO ESTRICTO PARA LA TV ===
+
             datosLideratoGlobalTV = datosTempTV.sort((a, b) => a.totalScore - b.totalScore);
+
+
 
             historialJugadores = nuevoHistorial;
 
+
+
             if (eventosWow.length > 0) {
+
                 mostrarAlertaWow(eventosWow[0].nombre, eventosWow[0].tipo);
+
             }
+
+
 
             let gananciasPorJugador = {};
+
             if (tourneyStateCode !== "pre") {
+
                 gananciasPorJugador = calcularGananciasGolfistas(golfistasExtraidos);
+
             }
 
+
+
             let resultadosPolla = participantes.map(part => {
+
                 let totalAcumulado = 0;
+
                 let picksDetallados = [];
+
                 let isHunt = false; 
 
+
+
                 part.picks.forEach(jugador => {
+
                     let norm = normalizarNombre(jugador);
+
                     
+
                     let datosVisuales = mapaDatosVisuales[norm] || {
+
                         nombreOriginal: jugador, scoreVal: 0, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
+
                         thru: "No encontrado", isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
+
                         headshot: "https://a.espncdn.com/i/headshots/golf/players/full/default.png", 
+
                         rondas: ["--","--","--","--"], flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png",
+
                         cutStatusHtml: ""
+
                     };
 
+
+
                     let ganancia = gananciasPorJugador[norm] || 0; 
+
                     if (datosVisuales.noHaDebutado) ganancia = 0;
+
+
 
                     totalAcumulado += ganancia;
 
+
+
                     if (["1", "T1", "2", "T2", "3", "T3"].includes(datosVisuales.posOriginal)) {
+
                         isHunt = true;
+
                     }
+
+
 
                     picksDetallados.push({ ...datosVisuales, gananciaCalculada: ganancia });
+
                 });
 
+
+
                 if (tourneyStateCode === "pre") {
+
                     picksDetallados.sort((a, b) => new Date(a.teeTimeRaw).getTime() - new Date(b.teeTimeRaw).getTime());
+
                 } else {
+
                     picksDetallados.sort((a, b) => b.gananciaCalculada - a.gananciaCalculada);
+
                     
+
                     let activos = picksDetallados.filter(p => !p.noHaDebutado);
+
                     if (activos.length > 0) {
+
                         let maxGanancia = activos[0].gananciaCalculada;
+
                         let minGanancia = activos[activos.length - 1].gananciaCalculada;
+
                         
+
                         activos.forEach(p => {
+
                             if (p.gananciaCalculada > 0 && p.gananciaCalculada === maxGanancia) {
+
                                 p.isMVP = true;
+
                             }
+
                             if (p.gananciaCalculada === minGanancia && minGanancia < maxGanancia && p.scoreVal > 0) {
+
                                 p.isAnchor = true;
+
                             }
+
                         });
+
                     }
+
                 }
 
+
+
                 return {
+
                     nombre: part.nombre,
+
                     total: totalAcumulado,
+
                     picks: picksDetallados,
+
                     isHunt: (isHunt && tourneyStateCode !== "pre")
+
                 };
+
             });
+
+
 
             resultadosPolla.sort((a, b) => b.total - a.total);
 
+
+
             const container = document.getElementById("standingsContainer");
+
             container.innerHTML = ""; 
 
+
+
             resultadosPolla.forEach((resultado, index) => {
+
                 let cardClass = "participant-card";
+
                 
+
                 if (tourneyStateCode !== "pre") {
+
                     if (index === 0) cardClass += " place-1";
+
                     if (index === 1) cardClass += " place-2";
+
                 }
+
                 if (resultado.isHunt) cardClass += " on-the-hunt";
 
+
+
                 let picksHTML = resultado.picks.map(p => {
+
                     let scoreClass = "";
+
                     if (p.scoreStr === "CUT" || p.scoreStr === "WD") scoreClass = "cut";
+
                     else if (p.scoreStr.includes("+")) scoreClass = "over-par";
+
                     else if (p.scoreStr === "E" || p.scoreStr === "-") scoreClass = "even-par";
+
                     
+
                     let liveHtml = p.isLive ? `<span class="live-dot" title="¡En el campo!"></span>` : ``;
+
                     
+
                     let specialBadge = "";
+
                     if (p.isMVP) specialBadge = `<span class="special-badge" title="MVP del equipo">🔥</span>`;
+
                     if (p.isAnchor) specialBadge = `<span class="special-badge" title="Saco de sal">🥶</span>`;
+
+
 
                     let nEscaped = p.nombreOriginal.replace(/'/g, "\\'");
 
+
+
                     return `
+
                         <div class="golfer-item" onclick="abrirModal('${nEscaped}', '${p.headshot}', '${p.flag}', '${p.rondas[0]}', '${p.rondas[1]}', '${p.rondas[2]}', '${p.rondas[3]}', '${p.posOriginal}', '${p.scoreStr}')">
+
                             <div class="golfer-top">
+
                                 <div class="headshot-container">
+
                                     <img src="${p.headshot}" class="headshot-img" onerror="this.src='https://a.espncdn.com/i/headshots/golf/players/full/default.png'">
+
                                     <img src="${p.flag}" class="flag-small" onerror="this.style.display='none'">
+
                                 </div>
+
                                 <div class="golfer-name-wrapper">
+
                                     <div class="golfer-name">${p.nombreOriginal} ${specialBadge}</div>
+
                                 </div>
+
                             </div>
+
                             <div class="golfer-stats">
+
                                 <div class="pos-wrapper">
+
                                     <span class="golfer-pos">${p.posOriginal}</span>
+
                                     ${p.movHtml}
+
                                     ${p.cutStatusHtml}
+
                                 </div>
+
                                 <span class="score-box ${scoreClass}">${p.scoreStr}</span>
+
                             </div>
+
                             <div class="golfer-thru">
+
                                 ${liveHtml}
+
                                 ${p.thru}
+
                             </div>
+
                             <div class="golfer-earnings">${"$" + p.gananciaCalculada.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+
                         </div>
+
                     `;
+
                 }).join('');
 
+
+
                 let estaColapsado = participantesColapsados.has(resultado.nombre);
+
                 let gridClass = estaColapsado ? "hidden-grid" : "";
+
                 let toggleSymbol = estaColapsado ? "+" : "-";
 
+
+
                 const div = document.createElement("div");
+
                 div.className = cardClass;
+
                 
+
                 let positionLabel = tourneyStateCode === "pre" ? "-" : `#${index + 1}`;
 
+
+
                 div.innerHTML = `
+
                     <div class="card-header" onclick="toggleTarjeta('${resultado.nombre}', this)">
+
                         <div class="participant-name"><span>${positionLabel}</span>${resultado.nombre}</div>
+
                         <div class="participant-total-wrapper">
+
                             <div class="participant-total">${"$" + resultado.total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+
                             <div class="toggle-btn">${toggleSymbol}</div>
+
                         </div>
+
                     </div>
+
                     <div class="golfers-grid ${gridClass}">
+
                         ${picksHTML}
+
                     </div>
+
                 `;
+
                 container.appendChild(div);
+
             });
+
+
 
             let delay = 180000;
 
+
+
             if (tourneyStateCode === "post") {
+
                 delay = null; 
+
             } else if (tourneyStateCode === "pre") {
+
                 delay = 1800000; 
+
             } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+
                 delay = 1800000; 
+
             }
+
+
 
             const now = new Date();
+
             document.getElementById("lastUpdate").innerText = `Última actualización: ${now.toLocaleTimeString('es-CO')}`;
 
+
+
             if (delay !== null) {
+
                 setTimeout(actualizarPolla, delay);
+
             }
 
+
+
         } catch (error) {
+
             console.error("Error consultando la API:", error);
+
             document.getElementById("lastUpdate").innerText = "Error actualizando. Reintentando...";
+
             setTimeout(actualizarPolla, 180000);
+
         }
+
     }
 
+
+
     document.getElementById("totalPool").innerText = formatMoney(BOLSA_TOTAL);
+
     document.getElementById("firstPrize").innerText = formatMoney(BOLSA_TOTAL * 0.70);
+
     document.getElementById("secondPrize").innerText = formatMoney(BOLSA_TOTAL * 0.30);
 
+
+
     // Iniciar la primera consulta
+
     actualizarPolla();
+
     
+
     // Configurar la animación de TV para que salte sola cada 10 minutos (600,000 ms)
+
     setInterval(mostrarLeaderboardTV, 600000);
 
+
+
 </script>
+
 </body>
-</html>
+
+</html> 
+
