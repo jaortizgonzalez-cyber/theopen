@@ -33,6 +33,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.15);
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
         }
         .header h1 { margin: 0 0 5px 0; font-size: 2.5em; }
         
@@ -108,6 +109,25 @@
             border-radius: 8px;
         }
         .prizes span { color: var(--accent-color); font-weight: bold; }
+
+        .btn-test-tv {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .btn-test-tv:hover {
+            transform: translateY(-2px);
+            background: #f5c742;
+        }
 
         .api-status {
             text-align: right;
@@ -215,11 +235,42 @@
 
         .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; margin-top: 5px; }
         
-        .pos-wrapper { display: flex; align-items: center; gap: 5px; }
+        .pos-wrapper { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .golfer-pos { color: var(--text-dark); font-weight: 900; font-size: 1.1em;}
         .mov-up { color: #2e7d32; font-size: 0.75em; font-weight: bold;}
         .mov-down { color: #d32f2f; font-size: 0.75em; font-weight: bold;}
         .mov-flat { color: #9e9e9e; font-size: 0.75em; font-weight: bold;}
+
+        /* MEDALLAS DE DRAMA DE CORTE */
+        .cut-badge {
+            font-size: 0.7em;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 2px;
+        }
+        .cut-badge.line {
+            background-color: #ff9800;
+            color: white;
+            animation: pulse-orange 1.5s infinite;
+        }
+        .cut-badge.danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .cut-badge.dead {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        @keyframes pulse-orange {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(255, 152, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
 
         .score-box { background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;}
         .score-box.over-par { background: #d32f2f; }
@@ -304,20 +355,86 @@
             50% { transform: translateY(-20px); } 
         }
 
+        /* ------------------------------------- */
+        /* --- ESTILOS TABLERO DE TELEVISIÓN --- */
+        /* ------------------------------------- */
+        .tv-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+        }
+        .tv-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .tv-board {
+            background: #141a29; 
+            width: 95%; max-width: 650px; border-radius: 8px; overflow: hidden;
+            transform: scale(0.85) translateY(50px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .tv-overlay.active .tv-board { transform: scale(1) translateY(0); }
+
+        .tv-header-box {
+            background: linear-gradient(90deg, #0b1536, #1b3a8a, #0b1536);
+            padding: 20px; display: flex; align-items: center; justify-content: center;
+            border-bottom: 3px solid #e5b122; position: relative;
+        }
+        .tv-header-box h2 {
+            margin: 0; color: #fff; font-size: 1.8em; letter-spacing: 2px;
+            font-family: 'Times New Roman', Times, serif; font-weight: normal;
+        }
+        .tv-close-btn {
+            position: absolute; right: 15px; top: 15px; color: #fff; font-size: 1.5em;
+            cursor: pointer; opacity: 0.6; user-select: none;
+        }
+        .tv-close-btn:hover { opacity: 1; }
+
+        .tv-table-container { width: 100%; position: relative; min-height: 450px; }
+        
+        /* Efecto de desvanecimiento entre páginas */
+        #tvTableBody {
+            transition: opacity 0.4s ease;
+        }
+        #tvTableBody.fade-out {
+            opacity: 0;
+        }
+
+        .tv-table { width: 100%; border-collapse: collapse; color: #fff; font-size: 0.95em; }
+        
+        .tv-table th {
+            text-align: center; padding: 10px 8px; color: #8fa0c4;
+            text-transform: uppercase; font-size: 0.75em; letter-spacing: 1px;
+            border-bottom: 1px solid #2a344a; font-weight: 600;
+        }
+        .tv-table th.col-name { text-align: left; }
+        
+        .tv-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #1f273a; }
+        .tv-table tr:last-child td { border-bottom: none; }
+        
+        .tv-cell-pos { font-weight: bold; color: #fff; width: 40px; }
+        .tv-cell-name { text-align: left; display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .tv-first-name { font-weight: normal; color: #d1d8e8; }
+        .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
+        
+        .tv-cell-today { font-weight: bold; width: 60px; }
+        
+        .tv-cell-total { width: 60px; }
+        .tv-total-box {
+            display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center;
+        }
+        .tv-total-box.under { background-color: #d32f2f; color: #fff; } 
+        .tv-total-box.even-over { background-color: transparent; color: #fff; }
+
+        .tv-cell-thru { width: 60px; color: #aaa; font-weight: bold; font-size: 0.9em; }
+
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .header { padding: 20px 15px; }
-            .header h1 { font-size: 1.8em; }
-            .tournament-status { font-size: 0.85em; }
-            .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
-            .participant-card { padding: 15px; }
-            .card-header { flex-wrap: nowrap; gap: 8px; } 
-            .participant-name { font-size: 1.3em; }
-            .participant-total { font-size: 1.4em; }
-            .golfers-grid { grid-template-columns: 1fr; }
-            .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
-            .wow-title { font-size: 2.2em; }
-            .wow-name { font-size: 1.5em; }
+            .tv-header-box h2 { font-size: 1.4em; }
+            .tv-table { font-size: 0.85em; }
+            .tv-flag { width: 18px; }
+            .tv-cell-pos, .tv-cell-today, .tv-cell-total, .tv-cell-thru { width: auto; padding: 10px 4px; }
+            .tv-table-container { min-height: 400px; }
         }
     </style>
 </head>
@@ -337,6 +454,8 @@
             <div>1er Puesto (70%): <span id="firstPrize">$0</span></div>
             <div>2do Puesto (30%): <span id="secondPrize">$0</span></div>
         </div>
+
+        <button class="btn-test-tv" onclick="mostrarLeaderboardTV()">📺 Probar TV</button>
     </div>
 
     <!-- HORA DE ACTUALIZACIÓN LIMPIA -->
@@ -380,9 +499,35 @@
     </div>
 </div>
 
+<!-- ESTRUCTURA DEL TABLERO DE TELEVISIÓN CON PAGINACIÓN -->
+<div id="tvLeaderboardOverlay" class="tv-overlay" onclick="cerrarTV(event)">
+    <div class="tv-board" onclick="event.stopPropagation()">
+        <div class="tv-header-box">
+            <h2>THE 154TH OPEN</h2>
+            <div class="tv-close-btn" onclick="cerrarTV(null, true)">&times;</div>
+        </div>
+        <div class="tv-table-container">
+            <table class="tv-table">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th class="col-name">Round <span id="tvRoundNum">--</span></th>
+                        <th>Today</th>
+                        <th>Total</th>
+                        <th>Thru</th>
+                    </tr>
+                </thead>
+                <tbody id="tvTableBody">
+                    <!-- Filas inyectadas y paginadas por JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
     // ==========================================
-    // 1. CONFIGURACIÓN DE LA POLLA
+    // 1. CONFIGURACIÓN DE LA POLLA Y VARIABLES
     // ==========================================
     const CUOTA_INSCRIPCION = 50000; 
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
@@ -412,6 +557,13 @@
     participantes.forEach(p => p.picks.forEach(pick => nombresElegidos.add(normalizarNombre(pick))));
 
     let historialJugadores = {};
+    
+    // Variables Paginación TV
+    let datosLideratoGlobalTV = []; 
+    let rondaActualGlobal = 1;
+    let tvScrollIntervalId = null;
+    let tvCurrentPage = 0;
+    const TV_PAGE_SIZE = 10;
 
     // ==========================================
     // 2. UTILIDADES Y MODALES
@@ -464,6 +616,84 @@
 
     window.testWow = function() {
         mostrarAlertaWow("Scottie Scheffler", "EAGLE");
+    };
+
+    // --- NUEVO: Paginación de Tablero TV ---
+    window.mostrarLeaderboardTV = function() {
+        if (datosLideratoGlobalTV.length === 0) return;
+
+        let overlay = document.getElementById('tvLeaderboardOverlay');
+        overlay.classList.add('active');
+
+        tvCurrentPage = 0;
+        renderTVPage(tvCurrentPage);
+
+        if (tvScrollIntervalId) clearInterval(tvScrollIntervalId);
+        
+        // Bucle de auto-scroll cada 10 segundos
+        tvScrollIntervalId = setInterval(() => {
+            let totalPages = Math.ceil(datosLideratoGlobalTV.length / TV_PAGE_SIZE);
+            tvCurrentPage++;
+            
+            if (tvCurrentPage >= totalPages) {
+                // Llegó al final de los 156 jugadores, cerramos la TV.
+                cerrarTV(null, true);
+            } else {
+                // Efecto de desvanecimiento suave para cambiar de página
+                let tbody = document.getElementById("tvTableBody");
+                tbody.classList.add("fade-out");
+                
+                setTimeout(() => {
+                    renderTVPage(tvCurrentPage);
+                    tbody.classList.remove("fade-out");
+                }, 400); // Espera a que termine el fade-out de CSS
+            }
+        }, 10000); 
+    };
+
+    function renderTVPage(pageIndex) {
+        document.getElementById("tvRoundNum").innerText = rondaActualGlobal;
+        const tbody = document.getElementById("tvTableBody");
+        tbody.innerHTML = "";
+
+        let startIndex = pageIndex * TV_PAGE_SIZE;
+        let pageData = datosLideratoGlobalTV.slice(startIndex, startIndex + TV_PAGE_SIZE);
+
+        pageData.forEach(j => {
+            let nameParts = j.nombre.split(" ");
+            let lastName = nameParts.pop().toUpperCase();
+            let firstName = nameParts.join(" ");
+            let formattedName = `<span class="tv-first-name">${firstName}</span> <span class="tv-last-name">${lastName}</span>`;
+
+            let totalClass = j.totalScore < 0 ? "under" : "even-over";
+
+            let todayText = j.todayScore === "0" || j.todayScore === 0 ? "PAR" : j.todayScore;
+            let totalText = j.totalScoreStr === "E" ? "PAR" : j.totalScoreStr;
+
+            let thruText = j.thru.replace("Thru ", "").replace("Casa Club (F)", "F").replace("Tee: ", "");
+
+            tbody.innerHTML += `
+                <tr>
+                    <td class="tv-cell-pos">${j.pos}</td>
+                    <td class="tv-cell-name">
+                        <img src="${j.flag}" class="tv-flag" onerror="this.style.display='none'">
+                        ${formattedName}
+                    </td>
+                    <td class="tv-cell-today">${todayText}</td>
+                    <td class="tv-cell-total">
+                        <div class="tv-total-box ${totalClass}">${totalText}</div>
+                    </td>
+                    <td class="tv-cell-thru">${thruText}</td>
+                </tr>
+            `;
+        });
+    }
+
+    window.cerrarTV = function(e, force = false) {
+        if (force || (e && e.target.id === 'tvLeaderboardOverlay')) {
+            document.getElementById('tvLeaderboardOverlay').classList.remove('active');
+            if(tvScrollIntervalId) clearInterval(tvScrollIntervalId);
+        }
     };
 
     function normalizarNombre(nombre) {
@@ -536,8 +766,8 @@
 
             let tourneyStateCode = event.status.type.state;       
 
-            // === LECTURA DEL ESTADO Y NÚMERO DE LA RONDA ===
             let currentRound = event.competitions[0].status.period || 1;
+            rondaActualGlobal = currentRound; // Guardamos para la TV
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
             let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
@@ -551,7 +781,6 @@
             
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
-            // === INTEGRACIÓN DEL SEMÁFORO EN EL ENCABEZADO CON RONDA DINÁMICA ===
             let semaforoClase = "verde";
             let textoSemaforo = "";
 
@@ -571,8 +800,9 @@
 
             document.getElementById("tourneyStatus").innerHTML = `<span class="semaforo ${semaforoClase}"></span> ${textoSemaforo}`;
 
-            // === LECTURA DE LA LÍNEA DE CORTE OFICIAL DE ESPN ===
             let etiquetaCorte = document.getElementById("cutProjected");
+            let oficialCutScore = undefined;
+
             if (tourneyStateCode === "pre" || currentRound > 2) {
                 etiquetaCorte.style.display = "none";
             } else {
@@ -580,14 +810,15 @@
                 let corteTexto = "N/A";
                 
                 if (event.tournament && event.tournament.cutScore !== undefined) {
-                    let scoreCorteNum = event.tournament.cutScore;
-                    corteTexto = scoreCorteNum === 0 ? "E" : (scoreCorteNum > 0 ? "+" + scoreCorteNum : scoreCorteNum.toString());
+                    oficialCutScore = event.tournament.cutScore;
+                    corteTexto = oficialCutScore === 0 ? "E" : (oficialCutScore > 0 ? "+" + oficialCutScore : oficialCutScore.toString());
                 }
                 
                 etiquetaCorte.innerText = "✂️ Proyección del Corte: " + corteTexto;
             }
 
-            competidoresData.forEach(comp => {
+            // --- EXTRACCIÓN DE DATOS ---
+            competidoresData.forEach((comp, index) => {
                 let nombre = comp.athlete.displayName;
                 let normNombre = normalizarNombre(nombre);
                 
@@ -652,9 +883,15 @@
                 }
 
                 let rounds = ["--", "--", "--", "--"];
+                let todayScoreLine = "-";
                 if (comp.linescores) {
                     comp.linescores.forEach(ls => {
-                        if (ls.period && ls.period <= 4 && ls.value) rounds[ls.period - 1] = ls.displayValue || ls.value;
+                        if (ls.period && ls.period <= 4 && ls.value) {
+                            rounds[ls.period - 1] = ls.displayValue || ls.value;
+                            if(ls.period === currentRound) {
+                                todayScoreLine = ls.displayValue || ls.value;
+                            }
+                        }
                     });
                 }
 
@@ -666,7 +903,21 @@
                     else movHtml = `<span class="mov-flat">-</span>`;
                 }
 
+                let cutStatusHtml = "";
+                if (currentRound <= 2 && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
+                    let diffCorte = scoreNum - oficialCutScore;
+                    
+                    if (diffCorte === 0) {
+                        cutStatusHtml = `<span class="cut-badge line" title="Justo en la línea del corte">Línea ✂️</span>`;
+                    } else if (diffCorte === 1 || diffCorte === 2) {
+                        cutStatusHtml = `<span class="cut-badge danger" title="A ${diffCorte} golpe(s) de salvarse">Sudando 💦</span>`;
+                    } else if (diffCorte >= 3) {
+                        cutStatusHtml = `<span class="cut-badge dead" title="Prácticamente eliminados">Empacando ✈️</span>`;
+                    }
+                }
+
                 let headshot = comp.athlete.headshot ? comp.athlete.headshot.href : "https://a.espncdn.com/i/headshots/golf/players/full/default.png";
+                let flagHref = comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png";
 
                 let infoJugador = {
                     nombreOriginal: nombre,
@@ -680,11 +931,39 @@
                     teeTimeRaw: rawTeeTime,
                     headshot: headshot,
                     rondas: rounds,
-                    flag: comp.athlete.flag ? comp.athlete.flag.href : "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                    flag: flagHref,
+                    cutStatusHtml: cutStatusHtml
                 };
 
                 golfistasExtraidos.push(infoJugador);
                 mapaDatosVisuales[normNombre] = infoJugador;
+            });
+
+            // === PREPARAR DATOS PARA EL TABLERO TV (Todos los jugadores para Paginación) ===
+            datosLideratoGlobalTV = competidoresData.map(comp => {
+                let todayScoreLine = "E";
+                if (comp.linescores && comp.linescores[currentRound - 1]) {
+                    todayScoreLine = comp.linescores[currentRound - 1].displayValue || "E";
+                }
+
+                let scoreNum = 0;
+                let scoreStr = "E";
+                if (comp.score && comp.score.displayValue) {
+                    scoreStr = comp.score.displayValue;
+                    if (scoreStr !== "E" && scoreStr !== "CUT" && scoreStr !== "WD") {
+                        scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
+                    }
+                }
+
+                return {
+                    pos: comp.status.position ? comp.status.position.displayName : "-",
+                    nombre: comp.athlete.displayName,
+                    flag: comp.athlete.flag ? comp.athlete.flag.href : "",
+                    todayScore: todayScoreLine,
+                    totalScore: scoreNum,
+                    totalScoreStr: scoreStr,
+                    thru: comp.status.displayThru || comp.status.thru || "Tee"
+                };
             });
 
             historialJugadores = nuevoHistorial;
@@ -710,7 +989,8 @@
                         nombreOriginal: jugador, scoreVal: 0, scoreStr: "N/A", posOriginal: "-", movHtml: "", 
                         thru: "No encontrado", isLive: false, noHaDebutado: true, teeTimeRaw: "9999-12-31T23:59Z",
                         headshot: "https://a.espncdn.com/i/headshots/golf/players/full/default.png", 
-                        rondas: ["--","--","--","--"], flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png"
+                        rondas: ["--","--","--","--"], flag: "https://a.espncdn.com/i/teamlogos/countries/500/un.png",
+                        cutStatusHtml: ""
                     };
 
                     let ganancia = gananciasPorJugador[norm] || 0; 
@@ -797,6 +1077,7 @@
                                 <div class="pos-wrapper">
                                     <span class="golfer-pos">${p.posOriginal}</span>
                                     ${p.movHtml}
+                                    ${p.cutStatusHtml}
                                 </div>
                                 <span class="score-box ${scoreClass}">${p.scoreStr}</span>
                             </div>
@@ -863,6 +1144,9 @@
 
     // Iniciar la primera consulta
     actualizarPolla();
+    
+    // Configurar la animación de TV para que salte sola cada 10 minutos (600,000 ms)
+    setInterval(mostrarLeaderboardTV, 600000);
 
 </script>
 </body>
