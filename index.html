@@ -597,12 +597,11 @@
     const API_URL = "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga";
 
     const participantes = [
-        { nombre: "Ronnie Sanchez", picks: ["Scottie Scheffler", "Rory McIlroy", "Xander Schauffele", "Matt Fitzpatrick", "Ludvig Aberg"] },
-        { nombre: "Juan Ardila", picks: ["Shane Lowry", "Rory McIlroy", "Viktor Hovland", "Tommy Fleetwood", "Scottie Scheffler"] },
+        { nombre: "Roberto García", picks: ["Matt Fitzpatrick", "Si Woo Kim", "Rory McIlroy", "Scottie Scheffler", "Aaron Rai"] },
+        { nombre: "Jesus Rojas", picks: ["Scottie Scheffler", "Rory McIlroy", "Tommy Fleetwood", "Chris Gotterup", "Justin Rose"] },
         { nombre: "Felipe Bernal", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Tommy Fleetwood", "Collin Morikawa"] },
-        { nombre: "Andrés Ortiz", picks: ["Scottie Scheffler", "Rory McIlroy", "Matt Fitzpatrick", "Xander Schauffele", "Tommy Fleetwood"] },
-        { nombre: "Fernando Fierro", picks: ["Robert MacIntyre", "Akshay Bhatia", "Min Woo Lee", "Shane Lowry", "Rory McIlroy"] },
-        { nombre: "Paul Franco", picks: ["Matt Fitzpatrick", "Rory McIlroy", "Patrick Cantlay", "Maverick McNealy", "Scottie Scheffler"] }
+        { nombre: "Jaime Gracia", picks: ["Scottie Scheffler", "Rory McIlroy", "Patrick Reed", "Wyndham Clark", "Tom Kim"] },
+        { nombre: "Hugo Castañeda", picks: ["Rory McIlroy", "Scottie Scheffler", "Viktor Hovland", "Xander Schauffele", "Ludvig Aberg"] }
     ];
 
     const BOLSA_TOTAL = CUOTA_INSCRIPCION * participantes.length;
@@ -963,7 +962,8 @@
                 }
 
                 let cutStatusHtml = "";
-                if (currentRound <= 2 && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
+                // CAMBIO ESTRICTO: Se agregó la variable !rondaTerminadaOSuspendida para desaparecer el status.
+                if (currentRound <= 2 && !rondaTerminadaOSuspendida && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
                     let diffCorte = scoreNum - oficialCutScore;
                     
                     if (diffCorte === 0) {
