@@ -390,7 +390,7 @@
         }
         .tv-close-btn:hover { opacity: 1; }
 
-        .tv-table-container { width: 100%; position: relative; min-height: 450px; }
+        .tv-table-container { width: 100%; position: relative; min-height: 480px; }
         
         /* Efecto de desvanecimiento entre páginas */
         #tvTableBody {
@@ -400,40 +400,59 @@
             opacity: 0;
         }
 
-        .tv-table { width: 100%; border-collapse: collapse; color: #fff; font-size: 0.95em; }
+        .tv-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            color: #fff; 
+            font-size: 0.95em; 
+            table-layout: fixed; /* Esto arregla el ancho de las columnas */
+        }
         
         .tv-table th {
-            text-align: center; padding: 10px 8px; color: #8fa0c4;
-            text-transform: uppercase; font-size: 0.75em; letter-spacing: 1px;
-            border-bottom: 1px solid #2a344a; font-weight: 600;
+            text-align: center; 
+            padding: 12px 10px; 
+            color: #8fa0c4;
+            text-transform: uppercase; 
+            font-size: 0.75em; 
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            font-weight: 600;
         }
-        .tv-table th.col-name { text-align: left; }
+        .tv-table th.col-name { 
+            text-align: left; 
+            width: 45%; /* Para que los nombres tengan suficiente espacio */
+        }
         
-        .tv-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #1f273a; }
+        .tv-table td { 
+            padding: 12px 10px; 
+            text-align: center; 
+            /* Se aplica un borde blanco semitransparente para que sea continuo y elegante */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+        }
         .tv-table tr:last-child td { border-bottom: none; }
         
-        .tv-cell-pos { font-weight: bold; color: #fff; width: 40px; }
+        .tv-cell-pos { font-weight: bold; color: #fff; width: 10%; }
         .tv-cell-name { text-align: left; display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
         .tv-first-name { font-weight: normal; color: #d1d8e8; }
         .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
         
-        .tv-cell-today { font-weight: bold; width: 60px; }
+        .tv-cell-today { font-weight: bold; width: 15%; }
         
-        .tv-cell-total { width: 60px; }
+        .tv-cell-total { width: 15%; }
         .tv-total-box {
             display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center;
         }
         .tv-total-box.under { background-color: #d32f2f; color: #fff; } 
         .tv-total-box.even-over { background-color: transparent; color: #fff; }
 
-        .tv-cell-thru { width: 60px; color: #aaa; font-weight: bold; font-size: 0.9em; }
+        .tv-cell-thru { width: 15%; color: #aaa; font-weight: bold; font-size: 0.9em; }
 
         @media (max-width: 768px) {
             .tv-header-box h2 { font-size: 1.4em; }
             .tv-table { font-size: 0.85em; }
             .tv-flag { width: 18px; }
-            .tv-cell-pos, .tv-cell-today, .tv-cell-total, .tv-cell-thru { width: auto; padding: 10px 4px; }
+            .tv-table th, .tv-table td { padding: 10px 4px; }
             .tv-table-container { min-height: 400px; }
         }
     </style>
@@ -455,7 +474,7 @@
             <div>2do Puesto (30%): <span id="secondPrize">$0</span></div>
         </div>
 
-        <button class="btn-test-tv" onclick="mostrarLeaderboardTV()">📺 Probar TV</button>
+        <button class="btn-test-tv" onclick="mostrarLeaderboardTV()">📺 Leaderboard</button>
     </div>
 
     <!-- HORA DE ACTUALIZACIÓN LIMPIA -->
@@ -510,11 +529,11 @@
             <table class="tv-table">
                 <thead>
                     <tr>
-                        <th>Pos</th>
+                        <th class="tv-cell-pos">Pos</th>
                         <th class="col-name">Round <span id="tvRoundNum">--</span></th>
-                        <th>Today</th>
-                        <th>Total</th>
-                        <th>Thru</th>
+                        <th class="tv-cell-today">Today</th>
+                        <th class="tv-cell-total">Total</th>
+                        <th class="tv-cell-thru">Thru</th>
                     </tr>
                 </thead>
                 <tbody id="tvTableBody">
@@ -614,11 +633,7 @@
         setTimeout(() => { overlay.classList.remove('active'); }, 6000);
     };
 
-    window.testWow = function() {
-        mostrarAlertaWow("Scottie Scheffler", "EAGLE");
-    };
-
-    // --- NUEVO: Paginación de Tablero TV ---
+    // --- Paginación de Tablero TV ---
     window.mostrarLeaderboardTV = function() {
         if (datosLideratoGlobalTV.length === 0) return;
 
@@ -636,17 +651,15 @@
             tvCurrentPage++;
             
             if (tvCurrentPage >= totalPages) {
-                // Llegó al final de los 156 jugadores, cerramos la TV.
                 cerrarTV(null, true);
             } else {
-                // Efecto de desvanecimiento suave para cambiar de página
                 let tbody = document.getElementById("tvTableBody");
                 tbody.classList.add("fade-out");
                 
                 setTimeout(() => {
                     renderTVPage(tvCurrentPage);
                     tbody.classList.remove("fade-out");
-                }, 400); // Espera a que termine el fade-out de CSS
+                }, 400); 
             }
         }, 10000); 
     };
@@ -670,8 +683,6 @@
             let todayText = j.todayScore === "0" || j.todayScore === 0 ? "PAR" : j.todayScore;
             let totalText = j.totalScoreStr === "E" ? "PAR" : j.totalScoreStr;
 
-            let thruText = j.thru.replace("Thru ", "").replace("Casa Club (F)", "F").replace("Tee: ", "");
-
             tbody.innerHTML += `
                 <tr>
                     <td class="tv-cell-pos">${j.pos}</td>
@@ -683,7 +694,7 @@
                     <td class="tv-cell-total">
                         <div class="tv-total-box ${totalClass}">${totalText}</div>
                     </td>
-                    <td class="tv-cell-thru">${thruText}</td>
+                    <td class="tv-cell-thru">${j.thru}</td>
                 </tr>
             `;
         });
@@ -767,7 +778,7 @@
             let tourneyStateCode = event.status.type.state;       
 
             let currentRound = event.competitions[0].status.period || 1;
-            rondaActualGlobal = currentRound; // Guardamos para la TV
+            rondaActualGlobal = currentRound; 
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
             let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
@@ -778,6 +789,7 @@
             
             let nuevoHistorial = {};
             let eventosWow = []; 
+            let datosTempTV = []; 
             
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
@@ -937,34 +949,23 @@
 
                 golfistasExtraidos.push(infoJugador);
                 mapaDatosVisuales[normNombre] = infoJugador;
-            });
 
-            // === PREPARAR DATOS PARA EL TABLERO TV (Todos los jugadores para Paginación) ===
-            datosLideratoGlobalTV = competidoresData.map(comp => {
-                let todayScoreLine = "E";
-                if (comp.linescores && comp.linescores[currentRound - 1]) {
-                    todayScoreLine = comp.linescores[currentRound - 1].displayValue || "E";
-                }
+                let thruTextTV = thruInfo.replace("Thru ", "").replace("Casa Club (F)", "F").replace("Tee: ", "").split(" COL")[0].trim();
+                if(scoreStr === "CUT" || scoreStr === "WD") thruTextTV = scoreStr;
 
-                let scoreNum = 0;
-                let scoreStr = "E";
-                if (comp.score && comp.score.displayValue) {
-                    scoreStr = comp.score.displayValue;
-                    if (scoreStr !== "E" && scoreStr !== "CUT" && scoreStr !== "WD") {
-                        scoreNum = parseInt(scoreStr.replace('+', '')) || 0;
-                    }
-                }
-
-                return {
+                datosTempTV.push({
                     pos: comp.status.position ? comp.status.position.displayName : "-",
-                    nombre: comp.athlete.displayName,
-                    flag: comp.athlete.flag ? comp.athlete.flag.href : "",
+                    nombre: nombre,
+                    flag: flagHref,
                     todayScore: todayScoreLine,
                     totalScore: scoreNum,
-                    totalScoreStr: scoreStr,
-                    thru: comp.status.displayThru || comp.status.thru || "Tee"
-                };
+                    totalScoreStr: noHaDebutado ? "-" : scoreStr,
+                    thru: thruTextTV
+                });
             });
+
+            // === ORDENAMIENTO ESTRICTO PARA LA TV ===
+            datosLideratoGlobalTV = datosTempTV.sort((a, b) => a.totalScore - b.totalScore);
 
             historialJugadores = nuevoHistorial;
 
