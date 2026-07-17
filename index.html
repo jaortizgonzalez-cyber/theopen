@@ -403,10 +403,16 @@
         .tv-table { 
             width: 100%; 
             border-collapse: collapse; 
+            border-spacing: 0;
             color: #fff; 
             font-size: 0.95em; 
-            table-layout: fixed; /* Esto arregla el ancho de las columnas */
+            table-layout: fixed; 
         }
+        
+        .tv-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+        }
+        .tv-table tr:last-child { border-bottom: none; }
         
         .tv-table th {
             text-align: center; 
@@ -420,19 +426,28 @@
         }
         .tv-table th.col-name { 
             text-align: left; 
-            width: 45%; /* Para que los nombres tengan suficiente espacio */
+            width: 45%; 
         }
         
         .tv-table td { 
             padding: 12px 10px; 
             text-align: center; 
-            /* Se aplica un borde blanco semitransparente para que sea continuo y elegante */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+            vertical-align: middle; 
         }
-        .tv-table tr:last-child td { border-bottom: none; }
         
         .tv-cell-pos { font-weight: bold; color: #fff; width: 10%; }
-        .tv-cell-name { text-align: left; display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        
+        .tv-cell-name { text-align: left; }
+        
+        .tv-name-wrapper {
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
+        }
+
         .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
         .tv-first-name { font-weight: normal; color: #d1d8e8; }
         .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
@@ -448,7 +463,37 @@
 
         .tv-cell-thru { width: 15%; color: #aaa; font-weight: bold; font-size: 0.9em; }
 
+        /* AJUSTES PARA PANTALLAS MÓVILES */
         @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 1.8em; }
+            
+            /* Solución al botón de Leaderboard que rompía la cabecera en celulares */
+            .btn-test-tv {
+                position: relative;
+                top: 0;
+                right: 0;
+                display: block;
+                width: 100%;
+                margin-top: 20px;
+                padding: 12px;
+                font-size: 1.1em;
+                box-sizing: border-box;
+            }
+
+            .tournament-status { font-size: 0.85em; }
+            .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
+            .participant-card { padding: 15px; }
+            .card-header { flex-wrap: nowrap; gap: 8px; } 
+            .participant-name { font-size: 1.3em; }
+            .participant-total { font-size: 1.4em; }
+            .golfers-grid { grid-template-columns: 1fr; }
+            .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
+            .wow-title { font-size: 2.2em; }
+            .wow-name { font-size: 1.5em; }
+            
+            /* Ajustes Tablero TV Móvil */
             .tv-header-box h2 { font-size: 1.4em; }
             .tv-table { font-size: 0.85em; }
             .tv-flag { width: 18px; }
@@ -687,8 +732,10 @@
                 <tr>
                     <td class="tv-cell-pos">${j.pos}</td>
                     <td class="tv-cell-name">
-                        <img src="${j.flag}" class="tv-flag" onerror="this.style.display='none'">
-                        ${formattedName}
+                        <div class="tv-name-wrapper">
+                            <img src="${j.flag}" class="tv-flag" onerror="this.style.display='none'">
+                            ${formattedName}
+                        </div>
                     </td>
                     <td class="tv-cell-today">${todayText}</td>
                     <td class="tv-cell-total">
