@@ -828,17 +828,19 @@
             rondaActualGlobal = currentRound; 
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
-            let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post");
-
+            
             const competidoresData = event.competitions[0].competitors;
+            
+            let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type && comp.status.type.state === "in");
+            let roundFinished = !hayJugadoresEnCampo && compStatusName !== "STATUS_SUSPENDED";
+            let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post" || !hayJugadoresEnCampo);
+
             let golfistasExtraidos = [];
             let mapaDatosVisuales = {}; 
             
             let nuevoHistorial = {};
             let eventosWow = []; 
             let datosTempTV = []; 
-            
-            let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type.state === "in");
 
             let semaforoClase = "verde";
             let textoSemaforo = "";
@@ -849,7 +851,7 @@
             } else if (tourneyStateCode === "pre") {
                 semaforoClase = "amarillo";
                 textoSemaforo = "El torneo aún no ha comenzado";
-            } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+            } else if (rondaTerminadaOSuspendida) {
                 semaforoClase = "rojo";
                 textoSemaforo = `Ronda ${currentRound} Finalizada`;
             } else {
@@ -890,6 +892,29 @@
                     scoreStr = comp.score.displayValue;
                 }
 
+                // === NUEVO: FORZAR ESTADO DE CORTE SI ESPN ESTÁ LENTO ===
+                let statusTypeDesc = comp.status.type ? (comp.status.type.description || "").toUpperCase() : "";
+                let statusTypeName = comp.status.type ? (comp.status.type.name || "").toUpperCase() : "";
+                let statusShortDetail = comp.status.type ? (comp.status.type.shortDetail || "").toUpperCase() : "";
+                let statusDisplayVal = comp.status.displayValue ? comp.status.displayValue.toUpperCase() : "";
+
+                // 1. Detección directa por texto de ESPN usando el JSON oficial
+                if (statusTypeDesc === "CUT" || statusTypeDesc === "MISSED CUT" || statusTypeName === "STATUS_CUT" || statusShortDetail === "CUT" || statusDisplayVal === "CUT") {
+                    scoreStr = "CUT";
+                } else if (statusTypeDesc === "WITHDRAWN" || statusTypeDesc === "WD" || statusTypeDesc === "DISQUALIFIED" || statusTypeDesc === "DQ") {
+                    scoreStr = "WD";
+                }
+
+                // 2. Fallback Matemático: Si la ronda 2 ya terminó (no hay nadie jugando) y el jugador superó la línea
+                if (oficialCutScore !== undefined && scoreStr !== "CUT" && scoreStr !== "WD") {
+                    let tempScore = (scoreStr === "E") ? 0 : parseInt(scoreStr.replace('+', '')) || 0;
+                    let isR2Done = (currentRound === 2 && roundFinished) || currentRound > 2;
+                    
+                    if (isR2Done && tempScore > oficialCutScore && comp.status.type && (comp.status.type.completed || comp.status.type.state === "post")) {
+                        scoreStr = "CUT";
+                    }
+                }
+
                 let scoreNum = 0;
                 if (scoreStr === "E") scoreNum = 0;
                 else if (scoreStr === "CUT" || scoreStr === "WD") scoreNum = 999;
@@ -900,7 +925,7 @@
                 
                 let thruInfo = "";
                 let isLive = false;
-                let noHaDebutado = (comp.status.period <= 1 && comp.status.type.state === "pre");
+                let noHaDebutado = (comp.status.period <= 1 && (!comp.status.type || comp.status.type.state === "pre"));
                 
                 let currentThruNum = comp.status.thru || 0;
 
@@ -928,13 +953,13 @@
                         thruInfo = "Falló Corte";
                     } else if (scoreStr === "WD") {
                         thruInfo = "Retirado";
-                    } else if (comp.status.type.completed || comp.status.type.state === "post") {
+                    } else if (comp.status.type && (comp.status.type.completed || comp.status.type.state === "post")) {
                         thruInfo = "Casa Club (F)";
-                    } else if (comp.status.type.state === "in") {
+                    } else if (comp.status.type && comp.status.type.state === "in") {
                         isLive = true;
                         let thruVal = comp.status.displayThru || comp.status.thru;
                         thruInfo = "Thru " + thruVal; 
-                    } else if (comp.status.type.state === "pre") {
+                    } else if (comp.status.type && comp.status.type.state === "pre") {
                         thruInfo = "Tee: " + horaColombia + " COL";
                     } else {
                         thruInfo = comp.status.thru > 0 ? "Thru " + comp.status.thru : "Tee: " + horaColombia + " COL";
@@ -963,7 +988,10 @@
                 }
 
                 let cutStatusHtml = "";
-                if (currentRound <= 2 && !rondaTerminadaOSuspendida && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
+                // Las medallas de drama ("Sudando", "Línea") SOLO aparecen si la Ronda 2 está oficialmente ACTIVA
+                let isR2Active = currentRound <= 2 && !roundFinished;
+                
+                if (isR2Active && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
                     let diffCorte = scoreNum - oficialCutScore;
                     
                     if (diffCorte === 0) {
@@ -1168,7 +1196,7 @@
                 delay = null; 
             } else if (tourneyStateCode === "pre") {
                 delay = 1800000; 
-            } else if (rondaTerminadaOSuspendida || !hayJugadoresEnCampo) {
+            } else if (rondaTerminadaOSuspendida) {
                 delay = 1800000; 
             }
 
