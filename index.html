@@ -474,6 +474,12 @@
             
             // Aseguramos que la marca quede grabada para que no vuelva a salir hasta la siguiente ronda
             localStorage.setItem("introGolfVisto_R" + rondaActualGlobal, "true");
+
+            // Regresar la bola mágicamente arriba en las sombras, lista para la próxima vez
+            setTimeout(() => {
+                ballWrapper.classList.remove('ball-drop');
+            }, 800);
+            
         }, 500);
     };
 
@@ -553,7 +559,7 @@
     };
 
     function normalizarNombre(nombre) {
-        return nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        return nombre.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
     }
 
     function formatMoney(amount) {
@@ -637,6 +643,10 @@
             if (!introVisto && introOverlay) {
                 let introTexts = document.getElementById('introTexts');
                 
+                // Asegurar que la bola siempre esté en su lugar antes de encender la pantalla
+                let ballWrapper = document.getElementById('ballWrapper');
+                if (ballWrapper) ballWrapper.classList.remove('ball-drop');
+                
                 if (currentRound < 4) {
                     // Diseño oscuro impactante para Sábado (Ronda < 4)
                     introTexts.innerHTML = `
@@ -653,6 +663,7 @@
                 }
                 
                 // Forzamos que se muestre en pantalla obligando al clic
+                introOverlay.classList.remove('dismissed');
                 introOverlay.classList.add('show-cinema');
             } else if (introOverlay) {
                 // Si ya la vio y le dio clic, la destruimos silenciosamente
@@ -665,6 +676,7 @@
             
             const competidoresData = event.competitions[0].competitors;
             
+            // Verificamos si la ronda terminó (ningún jugador con status "in")
             let hayJugadoresEnCampo = competidoresData.some(comp => comp.status.type && comp.status.type.state === "in");
             let roundFinished = !hayJugadoresEnCampo && compStatusName !== "STATUS_SUSPENDED";
             let rondaTerminadaOSuspendida = (compStatusName === "STATUS_PLAY_COMPLETE" || compStatusName === "STATUS_SUSPENDED" || compState === "post" || !hayJugadoresEnCampo);
@@ -726,17 +738,20 @@
                     scoreStr = comp.score.displayValue;
                 }
 
+                // === NUEVO: FORZAR ESTADO DE CORTE SI ESPN ESTÁ LENTO ===
                 let statusTypeDesc = comp.status.type ? (comp.status.type.description || "").toUpperCase() : "";
                 let statusTypeName = comp.status.type ? (comp.status.type.name || "").toUpperCase() : "";
                 let statusShortDetail = comp.status.type ? (comp.status.type.shortDetail || "").toUpperCase() : "";
                 let statusDisplayVal = comp.status.displayValue ? comp.status.displayValue.toUpperCase() : "";
 
+                // 1. Detección directa por texto de ESPN usando el JSON oficial
                 if (statusTypeDesc === "CUT" || statusTypeDesc === "MISSED CUT" || statusTypeName === "STATUS_CUT" || statusShortDetail === "CUT" || statusDisplayVal === "CUT") {
                     scoreStr = "CUT";
                 } else if (statusTypeDesc === "WITHDRAWN" || statusTypeDesc === "WD" || statusTypeDesc === "DISQUALIFIED" || statusTypeDesc === "DQ") {
                     scoreStr = "WD";
                 }
 
+                // 2. Fallback Matemático: Si la ronda 2 ya terminó (no hay nadie jugando) y el jugador superó la línea
                 if (oficialCutScore !== undefined && scoreStr !== "CUT" && scoreStr !== "WD") {
                     let tempScore = (scoreStr === "E") ? 0 : parseInt(scoreStr.replace('+', '')) || 0;
                     let isR2Done = (currentRound === 2 && roundFinished) || currentRound > 2;
@@ -819,6 +834,7 @@
                 }
 
                 let cutStatusHtml = "";
+                // Las medallas de drama ("Sudando", "Línea") SOLO aparecen si la Ronda 2 está oficialmente ACTIVA
                 let isR2Active = currentRound <= 2 && !roundFinished;
                 
                 if (isR2Active && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
@@ -966,7 +982,7 @@
                     if (p.isMVP) specialBadge = `<span class="special-badge" title="MVP del equipo">🔥</span>`;
                     if (p.isAnchor) specialBadge = `<span class="special-badge" title="Saco de sal">🥶</span>`;
 
-                    let nEscaped = p.nombreOriginal.replace(/'/g, "\\'");
+                    let nEscaped = p.nombreOriginal.replace(/'/g, "\'");
 
                     return `
                         <div class="golfer-item" onclick="abrirModal('${nEscaped}', '${p.headshot}', '${p.flag}', '${p.rondas[0]}', '${p.rondas[1]}', '${p.rondas[2]}', '${p.rondas[3]}', '${p.posOriginal}', '${p.scoreStr}')">
