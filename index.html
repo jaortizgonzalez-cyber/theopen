@@ -57,7 +57,6 @@
             gap: 8px;
         }
 
-        /* SEMÁFORO DE ESTADO */
         .semaforo {
             display: inline-block;
             width: 15px;
@@ -65,19 +64,9 @@
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.8);
         }
-        .semaforo.verde {
-            background-color: #34C759;
-            box-shadow: 0 0 12px #34C759, 0 0 20px rgba(52,199,89,0.6);
-            animation: pulse-semaforo-verde 2s infinite;
-        }
-        .semaforo.rojo {
-            background-color: #FF3B30;
-            box-shadow: 0 0 10px rgba(255,59,48,0.8);
-        }
-        .semaforo.amarillo {
-            background-color: #FFCC00;
-            box-shadow: 0 0 10px rgba(255,204,0,0.8);
-        }
+        .semaforo.verde { background-color: #34C759; box-shadow: 0 0 12px #34C759, 0 0 20px rgba(52,199,89,0.6); animation: pulse-semaforo-verde 2s infinite; }
+        .semaforo.rojo { background-color: #FF3B30; box-shadow: 0 0 10px rgba(255,59,48,0.8); }
+        .semaforo.amarillo { background-color: #FFCC00; box-shadow: 0 0 10px rgba(255,204,0,0.8); }
 
         @keyframes pulse-semaforo-verde {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
@@ -85,67 +74,17 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
         }
 
-        .cut-line-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            margin-top: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            letter-spacing: 0.5px;
-        }
+        .cut-line-badge { display: inline-block; background: rgba(255, 255, 255, 0.15); color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.3); letter-spacing: 0.5px; }
         
-        .prizes {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            font-size: 1.2em;
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 8px;
-        }
+        .prizes { display: flex; justify-content: center; gap: 30px; margin-top: 20px; font-size: 1.2em; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; }
         .prizes span { color: var(--accent-color); font-weight: bold; }
 
-        .btn-test-tv {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
-        .btn-test-tv:hover {
-            transform: translateY(-2px);
-            background: #f5c742;
-        }
+        .btn-test-tv { position: absolute; top: 20px; right: 20px; background: var(--accent-color); color: #000; border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
+        .btn-test-tv:hover { transform: translateY(-2px); background: #f5c742; }
 
-        .api-status {
-            text-align: right;
-            font-size: 0.9em;
-            color: var(--text-light);
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+        .api-status { text-align: right; font-size: 0.9em; color: var(--text-light); margin-bottom: 20px; font-weight: bold; }
 
-        .participant-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            border-left: 6px solid #ccc;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-        }
+        .participant-card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-left: 6px solid #ccc; transition: transform 0.2s ease, box-shadow 0.3s ease; }
         .participant-card:hover { transform: translateY(-3px); }
         .place-1 { border-left-color: var(--accent-color); background-color: #fffdf5; }
         .place-2 { border-left-color: #a0a0a0; background-color: #fafafa; }
@@ -155,86 +94,32 @@
             50% { box-shadow: 0 0 20px rgba(229, 177, 34, 0.6); }
             100% { box-shadow: 0 0 5px rgba(229, 177, 34, 0.2); }
         }
-        .on-the-hunt {
-            border: 2px solid var(--accent-color);
-            animation: golden-glow 2.5s infinite;
-        }
+        .on-the-hunt { border: 2px solid var(--accent-color); animation: golden-glow 2.5s infinite; }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            cursor: pointer; 
-            user-select: none; 
-        }
-        
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; cursor: pointer; user-select: none; }
         .participant-total-wrapper { display: flex; align-items: center; gap: 15px; }
 
-        .toggle-btn {
-            font-size: 1.8em;
-            font-weight: 900;
-            color: var(--accent-color);
-            background: var(--primary-color);
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: titilar-boton 2s infinite ease-in-out;
-        }
-
-        @keyframes titilar-boton {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 10px rgba(229, 177, 34, 0.5); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        .toggle-btn { font-size: 1.8em; font-weight: 900; color: var(--accent-color); background: var(--primary-color); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; animation: titilar-boton 2s infinite ease-in-out; }
+        @keyframes titilar-boton { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 10px rgba(229, 177, 34, 0.5); } 100% { opacity: 1; transform: scale(1); } }
 
         .hidden-grid { display: none !important; }
-
         .participant-name { font-size: 1.6em; font-weight: 800; color: var(--primary-color); }
         .participant-name span { font-size: 0.6em; color: var(--text-light); font-weight: normal; margin-right: 10px;}
         .participant-total { font-size: 1.8em; font-weight: 900; color: #2e7d32; }
 
-        .golfers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
-        .golfer-item {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #e0e0e0;
-            position: relative;
-            cursor: pointer; 
-            transition: background 0.2s;
-        }
+        .golfers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .golfer-item { background: #f8f9fa; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; border: 1px solid #e0e0e0; position: relative; cursor: pointer; transition: background 0.2s; }
         .golfer-item:active { background: #e0e0e0; }
-        
         .golfer-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;}
-        
         .headshot-container { position: relative; width: 40px; height: 40px; }
-        .headshot-img {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            background-color: #e0e0e0; border: 1px solid #ccc;
-        }
-        .flag-small {
-            position: absolute; bottom: -2px; right: -5px; width: 18px;
-            border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
+        .headshot-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background-color: #e0e0e0; border: 1px solid #ccc; }
+        .flag-small { position: absolute; bottom: -2px; right: -5px; width: 18px; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
         .golfer-name-wrapper { display: flex; flex-direction: column; overflow: hidden; }
         .golfer-name { font-weight: 700; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-color);}
         .special-badge { font-size: 0.9em; margin-left: 3px; }
 
         .golfer-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; margin-top: 5px; }
-        
         .pos-wrapper { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .golfer-pos { color: var(--text-dark); font-weight: 900; font-size: 1.1em;}
         .mov-up { color: #2e7d32; font-size: 0.75em; font-weight: bold;}
@@ -242,246 +127,119 @@
         .mov-flat { color: #9e9e9e; font-size: 0.75em; font-weight: bold;}
 
         /* MEDALLAS DE DRAMA DE CORTE */
-        .cut-badge {
-            font-size: 0.7em;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-left: 2px;
-        }
-        .cut-badge.line {
-            background-color: #ff9800;
-            color: white;
-            animation: pulse-orange 1.5s infinite;
-        }
-        .cut-badge.danger {
-            background-color: #f44336;
-            color: white;
-        }
-        .cut-badge.dead {
-            background-color: #9e9e9e;
-            color: white;
-        }
-
-        @keyframes pulse-orange {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(255, 152, 0, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
-        }
+        .cut-badge { font-size: 0.7em; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 2px; }
+        .cut-badge.line { background-color: #ff9800; color: white; animation: pulse-orange 1.5s infinite; }
+        .cut-badge.danger { background-color: #f44336; color: white; }
+        .cut-badge.dead { background-color: #9e9e9e; color: white; }
+        @keyframes pulse-orange { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(255, 152, 0, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); } }
 
         .score-box { background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;}
         .score-box.over-par { background: #d32f2f; }
         .score-box.even-par { background: #757575; }
         .score-box.cut { background: #000000; }
         
-        .golfer-thru { 
-            font-size: 0.85em; color: var(--text-light); margin-top: 8px; 
-            display: flex; justify-content: flex-end; align-items: center;
-        }
-        
-        .live-dot {
-            height: 10px; width: 10px; background-color: #ff3b30; border-radius: 50%;
-            display: inline-block; margin-right: 6px; animation: pulse-red 1.5s infinite;
-        }
-        
-        @keyframes pulse-red {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
-        }
+        .golfer-thru { font-size: 0.85em; color: var(--text-light); margin-top: 8px; display: flex; justify-content: flex-end; align-items: center; }
+        .live-dot { height: 10px; width: 10px; background-color: #ff3b30; border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
 
         .golfer-earnings { margin-top: 8px; font-weight: 900; color: #2e7d32; text-align: right; border-top: 1px dashed #ddd; padding-top: 8px; font-size: 1.1em;}
 
-        /* MODAL JUGADOR */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
+        /* MODALES Y OVERLAYS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        
-        .modal-content {
-            background: white; border-radius: 16px; padding: 25px; width: 90%; max-width: 360px;
-            transform: scale(0.8) translateY(50px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3); position: relative;
-        }
+        .modal-content { background: white; border-radius: 16px; padding: 25px; width: 90%; max-width: 360px; transform: scale(0.8) translateY(50px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 30px rgba(0,0,0,0.3); position: relative; }
         .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
-
-        .close-modal {
-            position: absolute; top: 10px; right: 15px; font-size: 1.8em; 
-            cursor: pointer; color: #999; font-weight: bold;
-        }
-        
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: #999; font-weight: bold; }
         .modal-header-info { display: flex; align-items: center; gap: 15px; margin-bottom: 20px;}
         .modal-header-info .img-wrapper { position: relative; width: 70px; height: 70px; }
         .modal-header-info img.main-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
         .modal-header-info img.flag-pic { position: absolute; bottom: 0; right: -5px; width: 25px; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.4);}
-        
         .modal-name-pos h2 { margin: 0; font-size: 1.4em; color: var(--primary-color); line-height: 1.1; }
         .modal-name-pos .m-pos { margin-top: 5px; color: #555; font-size: 1.1em; font-weight: bold;}
         .modal-name-pos .m-score { color: var(--primary-color); font-weight: 900;}
-
         .round-scores { display: flex; justify-content: space-between; gap: 8px;}
         .round { text-align: center; background: #f4f6f8; padding: 12px 5px; border-radius: 10px; flex: 1; border: 1px solid #eaeaea;}
         .round span { display: block; font-size: 0.85em; color: #888; margin-bottom: 5px; font-weight: 600;}
         .round strong { font-size: 1.3em; color: var(--primary-color); }
 
-        /* ALERTA WOW (EAGLE / HOLE IN ONE) */
-        .wow-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-        }
+        .wow-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .wow-overlay.active { opacity: 1; pointer-events: all; }
-        .wow-box {
-            background: linear-gradient(135deg, #FFD700, #F5A623);
-            padding: 40px; border-radius: 20px; text-align: center;
-            transform: scale(0.5); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); border: 4px solid #fff;
-            width: 80%; max-width: 400px;
-        }
+        .wow-box { background: linear-gradient(135deg, #FFD700, #F5A623); padding: 40px; border-radius: 20px; text-align: center; transform: scale(0.5); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); border: 4px solid #fff; width: 80%; max-width: 400px; }
         .wow-overlay.active .wow-box { transform: scale(1); }
         .wow-icon { font-size: 5em; margin-bottom: 10px; animation: bounce-wow 1s infinite; }
         .wow-title { font-size: 2.8em; font-weight: 900; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 0; text-transform: uppercase; line-height: 1.1;}
         .wow-name { font-size: 1.8em; font-weight: 800; color: #001a38; margin-top: 15px; }
         .wow-desc { font-size: 1.2em; color: #fff; margin-top: 10px; font-weight: bold; }
-        
-        @keyframes bounce-wow { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-20px); } 
-        }
+        @keyframes bounce-wow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* ------------------------------------- */
-        /* --- ESTILOS TABLERO DE TELEVISIÓN --- */
-        /* ------------------------------------- */
-        .tv-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
-        }
+        /* TABLERO TV */
+        .tv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
         .tv-overlay.active { opacity: 1; pointer-events: all; }
-        
-        .tv-board {
-            background: #141a29; 
-            width: 95%; max-width: 650px; border-radius: 8px; overflow: hidden;
-            transform: scale(0.85) translateY(50px);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+        .tv-board { background: #141a29; width: 95%; max-width: 650px; border-radius: 8px; overflow: hidden; transform: scale(0.85) translateY(50px); transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 60px rgba(0,0,0,0.7); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         .tv-overlay.active .tv-board { transform: scale(1) translateY(0); }
-
-        .tv-header-box {
-            background: linear-gradient(90deg, #0b1536, #1b3a8a, #0b1536);
-            padding: 20px; display: flex; align-items: center; justify-content: center;
-            border-bottom: 3px solid #e5b122; position: relative;
-        }
-        .tv-header-box h2 {
-            margin: 0; color: #fff; font-size: 1.8em; letter-spacing: 2px;
-            font-family: 'Times New Roman', Times, serif; font-weight: normal;
-        }
-        .tv-close-btn {
-            position: absolute; right: 15px; top: 15px; color: #fff; font-size: 1.5em;
-            cursor: pointer; opacity: 0.6; user-select: none;
-        }
+        .tv-header-box { background: linear-gradient(90deg, #0b1536, #1b3a8a, #0b1536); padding: 20px; display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #e5b122; position: relative; }
+        .tv-header-box h2 { margin: 0; color: #fff; font-size: 1.8em; letter-spacing: 2px; font-family: 'Times New Roman', Times, serif; font-weight: normal; }
+        .tv-close-btn { position: absolute; right: 15px; top: 15px; color: #fff; font-size: 1.5em; cursor: pointer; opacity: 0.6; user-select: none; }
         .tv-close-btn:hover { opacity: 1; }
-
         .tv-table-container { width: 100%; position: relative; min-height: 480px; }
-        
-        /* Efecto de desvanecimiento entre páginas */
-        #tvTableBody {
-            transition: opacity 0.4s ease;
-        }
-        #tvTableBody.fade-out {
-            opacity: 0;
-        }
-
-        .tv-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            border-spacing: 0;
-            color: #fff; 
-            font-size: 0.95em; 
-            table-layout: fixed; 
-        }
-        
-        .tv-table tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
-        }
+        #tvTableBody { transition: opacity 0.4s ease; }
+        #tvTableBody.fade-out { opacity: 0; }
+        .tv-table { width: 100%; border-collapse: collapse; border-spacing: 0; color: #fff; font-size: 0.95em; table-layout: fixed; }
+        .tv-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
         .tv-table tr:last-child { border-bottom: none; }
-        
-        .tv-table th {
-            text-align: center; 
-            padding: 12px 10px; 
-            color: #8fa0c4;
-            text-transform: uppercase; 
-            font-size: 0.75em; 
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.2); 
-            font-weight: 600;
-        }
-        .tv-table th.col-name { 
-            text-align: left; 
-            width: 45%; 
-        }
-        
-        .tv-table td { 
-            padding: 12px 10px; 
-            text-align: center; 
-            vertical-align: middle; 
-        }
-        
+        .tv-table th { text-align: center; padding: 12px 10px; color: #8fa0c4; text-transform: uppercase; font-size: 0.75em; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.2); font-weight: 600; }
+        .tv-table th.col-name { text-align: left; width: 45%; }
+        .tv-table td { padding: 12px 10px; text-align: center; vertical-align: middle; }
         .tv-cell-pos { font-weight: bold; color: #fff; width: 10%; }
-        
         .tv-cell-name { text-align: left; }
-        
-        .tv-name-wrapper {
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-        }
-
+        .tv-name-wrapper { display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tv-flag { width: 22px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
         .tv-first-name { font-weight: normal; color: #d1d8e8; }
         .tv-last-name { font-weight: 800; font-size: 1.05em; color: #fff; text-transform: uppercase; }
-        
         .tv-cell-today { font-weight: bold; width: 15%; }
-        
         .tv-cell-total { width: 15%; }
-        .tv-total-box {
-            display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center;
-        }
+        .tv-total-box { display: inline-block; padding: 3px 8px; border-radius: 3px; font-weight: bold; font-size: 1em; min-width: 25px; text-align: center; }
         .tv-total-box.under { background-color: #d32f2f; color: #fff; } 
         .tv-total-box.even-over { background-color: transparent; color: #fff; }
-
         .tv-cell-thru { width: 15%; color: #aaa; font-weight: bold; font-size: 0.9em; }
+
+        /* ========================================= */
+        /* --- ESTILOS SUPER INTRO CINEMÁTICA --- */
+        /* ========================================= */
+        .cinema-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 999999;
+            display: none; align-items: center; justify-content: center; flex-direction: column;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        .cinema-overlay.show-cinema { display: flex; }
+        .cinema-overlay.dismissed { opacity: 0; visibility: hidden; pointer-events: none; }
+        
+        .cinema-content { text-align: center; color: white; position: relative; z-index: 1; }
+        .cinema-subtitle { color: #8fa0c4; font-size: 1.2em; letter-spacing: 6px; font-weight: 600; margin-bottom: -10px; text-transform: uppercase; }
+        .cinema-title { font-family: 'Times New Roman', Times, serif; font-size: 3.8em; font-weight: normal; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin: 0; letter-spacing: 2px; }
+        .cinema-title.gold { background: linear-gradient(to bottom, #fff 40%, #e5b122 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 10px 30px rgba(229, 177, 34, 0.4); }
+        .th-super { font-size: 0.5em; vertical-align: top; letter-spacing: 0; }
+        .cinema-drama { font-size: 1.5em; color: #888; font-weight: 800; letter-spacing: 4px; margin-top: 10px; animation: pulse-drama 2s infinite alternate; }
+
+        .golf-scene { position: relative; width: 200px; height: 150px; margin: 60px auto 0; cursor: pointer; }
+        .golf-hole { width: 80px; height: 25px; background: #0a0a0a; border-radius: 50%; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); box-shadow: inset 0 5px 15px #000, 0 2px 2px rgba(255,255,255,0.1); border: 1px solid #222; }
+        .golf-ball-wrapper { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); transition: all 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53); z-index: 2; }
+        .golf-ball { width: 35px; height: 35px; background: radial-gradient(circle at 12px 12px, #fff, #bbb); border-radius: 50%; box-shadow: 0 10px 15px rgba(0,0,0,0.6), inset -2px -2px 6px rgba(0,0,0,0.3); animation: float-ball 2s infinite ease-in-out; }
+        .click-text { position: absolute; bottom: -20px; width: 100%; text-align: center; font-size: 0.85em; color: #666; letter-spacing: 3px; animation: flash-text 1.5s infinite; font-weight: bold; pointer-events: none; }
+        
+        .golf-scene:hover .golf-ball { box-shadow: 0 0 20px #fff, inset -2px -2px 6px rgba(0,0,0,0.3); }
+        .ball-drop { transform: translate(-50%, 65px) scale(0.3) !important; opacity: 0; }
+
+        @keyframes float-ball { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes flash-text { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes pulse-drama { 0% { opacity: 0.8; } 100% { opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.5); } }
 
         /* AJUSTES PARA PANTALLAS MÓVILES */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .header { padding: 20px 15px; }
             .header h1 { font-size: 1.8em; }
-            
-            /* Solución al botón de Leaderboard que rompía la cabecera en celulares */
-            .btn-test-tv {
-                position: relative;
-                top: 0;
-                right: 0;
-                display: block;
-                width: 100%;
-                margin-top: 20px;
-                padding: 12px;
-                font-size: 1.1em;
-                box-sizing: border-box;
-            }
-
+            .btn-test-tv { position: relative; top: 0; right: 0; display: block; width: 100%; margin-top: 20px; padding: 12px; font-size: 1.1em; box-sizing: border-box; }
             .tournament-status { font-size: 0.85em; }
             .prizes { flex-direction: column; gap: 12px; font-size: 1em; }
             .participant-card { padding: 15px; }
@@ -490,19 +248,45 @@
             .participant-total { font-size: 1.4em; }
             .golfers-grid { grid-template-columns: 1fr; }
             .toggle-btn { width: 30px; height: 30px; font-size: 1.5em; }
-            .wow-title { font-size: 2.2em; }
-            .wow-name { font-size: 1.5em; }
-            
-            /* Ajustes Tablero TV Móvil */
             .tv-header-box h2 { font-size: 1.4em; }
             .tv-table { font-size: 0.85em; }
             .tv-flag { width: 18px; }
             .tv-table th, .tv-table td { padding: 10px 4px; }
             .tv-table-container { min-height: 400px; }
+            
+            .cinema-title { font-size: 2.5em; }
+            .cinema-subtitle { font-size: 0.9em; letter-spacing: 4px; }
+            .cinema-drama { font-size: 1.1em; }
         }
     </style>
 </head>
 <body>
+
+<!-- SUPER INTRO DOMINGO DE CAMPEONATO -->
+<div id="championshipIntro" class="cinema-overlay">
+    <div class="cinema-content">
+        <div id="introTexts">
+            <!-- Textos inyectados por JS -->
+            <h1 class="cinema-title">Cargando...</h1>
+        </div>
+        
+        <div class="golf-scene" id="btnEnterPool" onclick="cerrarSuperIntro()">
+            <div class="golf-hole"></div>
+            <div class="golf-ball-wrapper" id="ballWrapper">
+                <div class="golf-ball"></div>
+            </div>
+            <div class="click-text">HAZ CLIC EN LA BOLA PARA ENTRAR</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Predicción rápida basada en la sesión anterior para que el fondo negro cubra de inmediato
+    let sr = localStorage.getItem("lastKnownRound") || 3;
+    if (!localStorage.getItem("introGolfVisto_R" + sr)) {
+        document.getElementById('championshipIntro').classList.add('show-cinema');
+    }
+</script>
 
 <div class="container">
     <div class="header">
@@ -510,7 +294,6 @@
         <div class="course-info" id="courseInfo">Cargando datos del campo...</div>
         <div class="tournament-status" id="tourneyStatus">Conectando...</div>
         
-        <!-- PÍLDORA DE PROYECCIÓN DE CORTE -->
         <div class="cut-line-badge" id="cutProjected" style="display: none;">✂️ Proyección del Corte: Calculando...</div>
         
         <div class="prizes">
@@ -522,7 +305,6 @@
         <button class="btn-test-tv" onclick="mostrarLeaderboardTV()">📺 Leaderboard</button>
     </div>
 
-    <!-- HORA DE ACTUALIZACIÓN LIMPIA -->
     <div class="api-status" id="lastUpdate">Última actualización: Cargando...</div>
 
     <div id="standingsContainer">
@@ -678,6 +460,23 @@
         setTimeout(() => { overlay.classList.remove('active'); }, 6000);
     };
 
+    // Función del Golpe de Golf en el Intro
+    window.cerrarSuperIntro = function() {
+        let ballWrapper = document.getElementById('ballWrapper');
+        // Animación de la bola cayendo al hoyo
+        ballWrapper.classList.add('ball-drop');
+        
+        // Esperamos medio segundo a que termine de caer la bola para desvanecer el fondo negro
+        setTimeout(() => {
+            let intro = document.getElementById('championshipIntro');
+            intro.classList.remove('show-cinema');
+            intro.classList.add('dismissed');
+            
+            // Aseguramos que la marca quede grabada para que no vuelva a salir hasta la siguiente ronda
+            localStorage.setItem("introGolfVisto_R" + rondaActualGlobal, "true");
+        }, 500);
+    };
+
     // --- Paginación de Tablero TV ---
     window.mostrarLeaderboardTV = function() {
         if (datosLideratoGlobalTV.length === 0) return;
@@ -690,7 +489,6 @@
 
         if (tvScrollIntervalId) clearInterval(tvScrollIntervalId);
         
-        // Bucle de auto-scroll cada 10 segundos
         tvScrollIntervalId = setInterval(() => {
             let totalPages = Math.ceil(datosLideratoGlobalTV.length / TV_PAGE_SIZE);
             tvCurrentPage++;
@@ -826,6 +624,42 @@
 
             let currentRound = event.competitions[0].status.period || 1;
             rondaActualGlobal = currentRound; 
+            
+            // Guardamos la ronda actual para la próxima vez que se abra la ventana
+            localStorage.setItem("lastKnownRound", currentRound);
+            
+            // ==========================================
+            // CONTROLADOR LÓGICO DE LA SUPER INTRO (VÁLIDO PARA CUALQUIER RONDA)
+            // ==========================================
+            let introVisto = localStorage.getItem("introGolfVisto_R" + currentRound);
+            let introOverlay = document.getElementById('championshipIntro');
+            
+            if (!introVisto && introOverlay) {
+                let introTexts = document.getElementById('introTexts');
+                
+                if (currentRound < 4) {
+                    // Diseño oscuro impactante para Sábado (Ronda < 4)
+                    introTexts.innerHTML = `
+                        <h1 class="cinema-title" style="font-size: 3.5em;">LA FINAL ESTÁ CERCA</h1>
+                        <div class="cinema-drama" style="color: #888;">PREPÁRATE PARA EL CIERRE</div>
+                    `;
+                } else {
+                    // Diseño dorado de campeonato para Domingo (Ronda 4)
+                    introTexts.innerHTML = `
+                        <div class="cinema-subtitle">RONDA 4 • CHAMPIONSHIP SUNDAY</div>
+                        <h1 class="cinema-title gold">THE 154<span class="th-super">TH</span> OPEN</h1>
+                        <div class="cinema-drama" style="color: #e5b122;">LA POLLA SE DECIDE HOY</div>
+                    `;
+                }
+                
+                // Forzamos que se muestre en pantalla obligando al clic
+                introOverlay.classList.add('show-cinema');
+            } else if (introOverlay) {
+                // Si ya la vio y le dio clic, la destruimos silenciosamente
+                introOverlay.classList.remove('show-cinema');
+                introOverlay.classList.add('dismissed');
+            }
+
             let compStatusName = event.competitions[0].status.type.name;
             let compState = event.competitions[0].status.type.state;
             
@@ -892,20 +726,17 @@
                     scoreStr = comp.score.displayValue;
                 }
 
-                // === NUEVO: FORZAR ESTADO DE CORTE SI ESPN ESTÁ LENTO ===
                 let statusTypeDesc = comp.status.type ? (comp.status.type.description || "").toUpperCase() : "";
                 let statusTypeName = comp.status.type ? (comp.status.type.name || "").toUpperCase() : "";
                 let statusShortDetail = comp.status.type ? (comp.status.type.shortDetail || "").toUpperCase() : "";
                 let statusDisplayVal = comp.status.displayValue ? comp.status.displayValue.toUpperCase() : "";
 
-                // 1. Detección directa por texto de ESPN usando el JSON oficial
                 if (statusTypeDesc === "CUT" || statusTypeDesc === "MISSED CUT" || statusTypeName === "STATUS_CUT" || statusShortDetail === "CUT" || statusDisplayVal === "CUT") {
                     scoreStr = "CUT";
                 } else if (statusTypeDesc === "WITHDRAWN" || statusTypeDesc === "WD" || statusTypeDesc === "DISQUALIFIED" || statusTypeDesc === "DQ") {
                     scoreStr = "WD";
                 }
 
-                // 2. Fallback Matemático: Si la ronda 2 ya terminó (no hay nadie jugando) y el jugador superó la línea
                 if (oficialCutScore !== undefined && scoreStr !== "CUT" && scoreStr !== "WD") {
                     let tempScore = (scoreStr === "E") ? 0 : parseInt(scoreStr.replace('+', '')) || 0;
                     let isR2Done = (currentRound === 2 && roundFinished) || currentRound > 2;
@@ -988,7 +819,6 @@
                 }
 
                 let cutStatusHtml = "";
-                // Las medallas de drama ("Sudando", "Línea") SOLO aparecen si la Ronda 2 está oficialmente ACTIVA
                 let isR2Active = currentRound <= 2 && !roundFinished;
                 
                 if (isR2Active && oficialCutScore !== undefined && scoreNum !== 999 && !noHaDebutado) {
